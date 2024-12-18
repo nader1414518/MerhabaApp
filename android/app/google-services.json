@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "88705650469",
+    "project_id": "merhabaapp-2ab80",
+    "storage_bucket": "merhabaapp-2ab80.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:88705650469:android:2ff25ed32135b7fd5254cc",
+        "android_client_info": {
+          "package_name": "com.yt.merhaba_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2uvhfDEoZvbfVBH2_6RdCIYPFPtYC-_8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
