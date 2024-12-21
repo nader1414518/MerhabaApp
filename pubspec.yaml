@@ -1,6 +1,6 @@
 name: merhaba_app
 description: "A social media app series Coder YT Channel"
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.0+1
 
@@ -28,8 +28,8 @@ dev_dependencies:
   flutter_lints: ^4.0.0
 
 flutter:
-
   uses-material-design: true
 
   assets:
     - assets/images/
+    - .env
