@@ -20,6 +20,7 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   supabase_flutter: ^2.8.2
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:

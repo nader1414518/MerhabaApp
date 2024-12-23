@@ -2,9 +2,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:merhaba_app/firebase_options.dart';
+import 'package:merhaba_app/providers/create_account_provider.dart';
+import 'package:merhaba_app/providers/login_provider.dart';
+import 'package:merhaba_app/screens/authentication/create_account_screen.dart';
+import 'package:merhaba_app/screens/authentication/login_screen.dart';
+import 'package:merhaba_app/screens/general/home_screen.dart';
 import 'package:merhaba_app/screens/general/welcome_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +39,18 @@ void main() async {
     print(e.toString());
   }
 
-  runApp(const MyApp());
+  // runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+        create: (_) => LoginProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => CreateAccountProvider(),
+      ),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -52,7 +70,14 @@ class MyApp extends StatelessWidget {
       title: 'Merhaba App',
       debugShowCheckedModeBanner: false,
       theme: FluentThemeData.dark(),
-      home: WelcomeScreen(),
+      // home: WelcomeScreen(),
+      initialRoute: "/",
+      routes: {
+        "/": (context) => WelcomeScreen(),
+        "/login": (context) => LoginScreen(),
+        "/create_account": (context) => CreateAccountScreen(),
+        "/home": (context) => HomeScreen(),
+      },
     );
   }
 }
