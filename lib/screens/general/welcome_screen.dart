@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:merhaba_app/controllers/auth_controller.dart';
 import 'package:merhaba_app/screens/authentication/login_screen.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
 
@@ -21,9 +22,10 @@ class WelcomeScreenState extends State<WelcomeScreen> {
       if (timerStart == 0) {
         timer.cancel();
 
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return LoginScreen();
-        }));
+        // Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        //   return LoginScreen();
+        // }));
+        Navigator.of(context).pushNamed("/login");
       } else {
         setState(() {
           timerStart--;
@@ -32,18 +34,33 @@ class WelcomeScreenState extends State<WelcomeScreen> {
     });
   }
 
+  Future<void> checkLogin() async {
+    try {
+      var res = await AuthController.checkLogin();
+      if (res["result"] == true) {
+        Navigator.of(context).pushNamed("/home");
+      } else {
+        Navigator.of(context).pushNamed("/login");
+      }
+    } catch (e) {
+      print(e.toString());
+      Navigator.of(context).pushNamed("/login");
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    startTimer();
+    // startTimer();
+    checkLogin();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
-    timer!.cancel();
+    // timer!.cancel();
     super.dispose();
   }
 

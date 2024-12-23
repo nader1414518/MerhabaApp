@@ -2,22 +2,25 @@ import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:merhaba_app/controllers/auth_controller.dart';
-import 'package:merhaba_app/providers/login_provider.dart';
+import 'package:merhaba_app/providers/create_account_provider.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
 import 'package:provider/provider.dart';
 
-class LoginScreen extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passController = TextEditingController();
+class CreateAccountScreen extends StatelessWidget {
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController fullNameController = TextEditingController();
+  TextEditingController passController = TextEditingController();
+  TextEditingController confirmPassController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final loginProvider = Provider.of<LoginProvider>(
+    final createAccountProvider = Provider.of<CreateAccountProvider>(
       context,
     );
 
     return Scaffold(
-      body: loginProvider.isLoading
+      body: createAccountProvider.isLoading
           ? const Center(
               child: CircularProgressIndicator(),
             )
@@ -48,11 +51,46 @@ class LoginScreen extends StatelessWidget {
                   height: 10,
                 ),
                 fluent.InfoLabel(
+                  label: "Enter your Full Name",
+                  child: fluent.TextBox(
+                    placeholder: 'Full Name',
+                    expands: false,
+                    controller: fullNameController,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                fluent.InfoLabel(
+                  label: "Enter your Phone",
+                  child: fluent.TextBox(
+                    placeholder: 'Phone',
+                    expands: false,
+                    controller: phoneController,
+                    keyboardType: TextInputType.phone,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                fluent.InfoLabel(
                   label: "Enter your password",
                   child: fluent.TextBox(
                     placeholder: 'Password',
                     expands: false,
                     controller: passController,
+                    obscureText: true,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                fluent.InfoLabel(
+                  label: "Confirm your password",
+                  child: fluent.TextBox(
+                    placeholder: 'Confirm Password',
+                    expands: false,
+                    controller: confirmPassController,
                     obscureText: true,
                   ),
                 ),
@@ -78,16 +116,42 @@ class LoginScreen extends StatelessWidget {
                           return;
                         }
 
-                        loginProvider.toggleLoading();
+                        if (confirmPassController.text == "") {
+                          Fluttertoast.showToast(
+                            msg: "Please confirm your password!!",
+                          );
+                          return;
+                        }
+
+                        if (confirmPassController.text != passController.text) {
+                          Fluttertoast.showToast(
+                            msg: "Passwords don't match!!",
+                          );
+                          return;
+                        }
+
+                        if (fullNameController.text == "") {
+                          Fluttertoast.showToast(
+                            msg: "Please enter your full name!!",
+                          );
+                          return;
+                        }
+
+                        createAccountProvider.toggleLoading();
 
                         try {
-                          var res = await AuthController.login(
-                            emailController.text,
-                            passController.text,
+                          var res = await AuthController.createAccount(
+                            {
+                              "email":
+                                  emailController.text.toLowerCase().trim(),
+                              "password": passController.text,
+                              "fullName": fullNameController.text,
+                              "phone": phoneController.text,
+                            },
                           );
 
                           if (res["result"] == true) {
-                            Navigator.of(context).pushNamed("/home");
+                            Navigator.of(context).pop();
                           } else {
                             Fluttertoast.showToast(
                               msg: res["message"].toString(),
@@ -97,7 +161,7 @@ class LoginScreen extends StatelessWidget {
                           print(e.toString());
                         }
 
-                        loginProvider.toggleLoading();
+                        createAccountProvider.toggleLoading();
                       },
                       style: ButtonStyle(
                         backgroundColor: WidgetStateProperty.all(
@@ -105,27 +169,11 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                       child: const Text(
-                        'Login',
+                        'Sign Up',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pushNamed("/create_account");
-                      },
-                      child: const Text(
-                        "Create Account",
                       ),
                     ),
                   ],
