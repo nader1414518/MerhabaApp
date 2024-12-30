@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:merhaba_app/firebase_options.dart';
 import 'package:merhaba_app/providers/create_account_provider.dart';
+import 'package:merhaba_app/providers/home_screen_provider.dart';
 import 'package:merhaba_app/providers/login_provider.dart';
 import 'package:merhaba_app/screens/authentication/create_account_screen.dart';
 import 'package:merhaba_app/screens/authentication/login_screen.dart';
@@ -47,6 +48,9 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (_) => CreateAccountProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => HomeScreenProvider(),
       ),
     ],
     child: const MyApp(),
