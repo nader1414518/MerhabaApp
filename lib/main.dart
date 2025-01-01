@@ -7,6 +7,7 @@ import 'package:merhaba_app/firebase_options.dart';
 import 'package:merhaba_app/providers/create_account_provider.dart';
 import 'package:merhaba_app/providers/home_screen_provider.dart';
 import 'package:merhaba_app/providers/login_provider.dart';
+import 'package:merhaba_app/providers/profile_tab_provider.dart';
 import 'package:merhaba_app/screens/authentication/create_account_screen.dart';
 import 'package:merhaba_app/screens/authentication/login_screen.dart';
 import 'package:merhaba_app/screens/general/home_screen.dart';
@@ -51,6 +52,9 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (_) => HomeScreenProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => ProfileTabProvider(),
       ),
     ],
     child: const MyApp(),
