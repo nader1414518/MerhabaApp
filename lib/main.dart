@@ -12,6 +12,7 @@ import 'package:merhaba_app/screens/authentication/create_account_screen.dart';
 import 'package:merhaba_app/screens/authentication/login_screen.dart';
 import 'package:merhaba_app/screens/general/home_screen.dart';
 import 'package:merhaba_app/screens/general/welcome_screen.dart';
+import 'package:merhaba_app/screens/tabs/profile/app_settings_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -85,6 +86,7 @@ class MyApp extends StatelessWidget {
         "/login": (context) => LoginScreen(),
         "/create_account": (context) => CreateAccountScreen(),
         "/home": (context) => HomeScreen(),
+        "/app_settings": (context) => AppSettingsScreen(),
       },
     );
   }
