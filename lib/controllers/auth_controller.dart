@@ -206,4 +206,24 @@ class AuthController {
       };
     }
   }
+
+  static Future<Map<String, dynamic>> updateCurrentUserData(
+      Map<String, dynamic> data) async {
+    try {
+      await Supabase.instance.client.auth.updateUser(UserAttributes(data: {
+        ...data,
+      }));
+
+      return {
+        "result": true,
+        "message": "Updated successfully ... ",
+      };
+    } catch (e) {
+      print(e.toString());
+      return {
+        "result": false,
+        "message": e.toString(),
+      };
+    }
+  }
 }

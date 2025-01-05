@@ -17,6 +17,30 @@ class ProfileTabProvider with ChangeNotifier {
   String _phone = "0192398483484";
   String get phone => _phone;
 
+  toggleLoading() {
+    _isLoading = !_isLoading;
+    notifyListeners();
+  }
+
+  Future<void> updateUserProfilePicture(String url) async {
+    toggleLoading();
+
+    try {
+      var res = await AuthController.updateCurrentUserData({
+        "picUrl": url,
+      });
+
+      if (res["result"] == true) {
+        _photoUrl = url;
+        notifyListeners();
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+
+    toggleLoading();
+  }
+
   Future<void> getUserData() async {
     try {
       var res = await AuthController.getCurrentUserData();
@@ -26,6 +50,8 @@ class ProfileTabProvider with ChangeNotifier {
         _email = userData["email"].toString();
         _username = userData["fullName"].toString();
         _phone = userData["phone"].toString();
+        _photoUrl =
+            userData["picUrl"] == null ? "" : userData["picUrl"].toString();
 
         notifyListeners();
       }
