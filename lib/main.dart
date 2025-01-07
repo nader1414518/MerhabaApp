@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:merhaba_app/firebase_options.dart';
+import 'package:merhaba_app/providers/app_settings_provider.dart';
 import 'package:merhaba_app/providers/create_account_provider.dart';
 import 'package:merhaba_app/providers/home_screen_provider.dart';
 import 'package:merhaba_app/providers/login_provider.dart';
@@ -56,6 +57,9 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (_) => ProfileTabProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => AppSettingsProvider(),
       ),
     ],
     child: const MyApp(),
