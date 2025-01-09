@@ -80,7 +80,7 @@ class AppSettingsScreen extends StatelessWidget {
                   value: appSettingsProvider
                       .isDark, // Boolean value indicating the current state of the switch
                   onChanged: (bool value) {
-                    appSettingsProvider.updateDarkMode(value);
+                    appSettingsProvider.updateDarkMode(value, context);
                   },
                   activeColor: CupertinoColors
                       .activeGreen, // Color when the switch is ON

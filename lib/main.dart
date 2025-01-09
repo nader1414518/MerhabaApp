@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:merhaba_app/screens/authentication/login_screen.dart';
 import 'package:merhaba_app/screens/general/home_screen.dart';
 import 'package:merhaba_app/screens/general/welcome_screen.dart';
 import 'package:merhaba_app/screens/tabs/profile/app_settings_screen.dart';
+import 'package:merhaba_app/utils/globals.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -39,6 +41,19 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+  } catch (e) {
+    print(e.toString());
+  }
+
+  try {
+    final savedThemeMode = await AdaptiveTheme.getThemeMode();
+    if (savedThemeMode != null) {
+      if (savedThemeMode == AdaptiveThemeMode.light) {
+        Globals.theme = "Light";
+      } else {
+        Globals.theme = "Dark";
+      }
+    }
   } catch (e) {
     print(e.toString());
   }
@@ -79,19 +94,45 @@ class MyApp extends StatelessWidget {
     //   home: WelcomeScreen(),
     // );
 
-    return FluentApp(
-      title: 'Merhaba App',
-      debugShowCheckedModeBanner: false,
-      theme: FluentThemeData.dark(),
-      // home: WelcomeScreen(),
-      initialRoute: "/",
-      routes: {
-        "/": (context) => WelcomeScreen(),
-        "/login": (context) => LoginScreen(),
-        "/create_account": (context) => CreateAccountScreen(),
-        "/home": (context) => HomeScreen(),
-        "/app_settings": (context) => AppSettingsScreen(),
-      },
+    // return FluentApp(
+    //   title: 'Merhaba App',
+    //   debugShowCheckedModeBanner: false,
+    //   theme: FluentThemeData.dark(),
+    //   // home: WelcomeScreen(),
+    //   initialRoute: "/",
+    //   routes: {
+    //     "/": (context) => WelcomeScreen(),
+    //     "/login": (context) => LoginScreen(),
+    //     "/create_account": (context) => CreateAccountScreen(),
+    //     "/home": (context) => HomeScreen(),
+    //     "/app_settings": (context) => AppSettingsScreen(),
+    //   },
+    // );
+
+    return AdaptiveTheme(
+      light: ThemeData.light(useMaterial3: true),
+      dark: ThemeData.dark(useMaterial3: true),
+      initial: AdaptiveThemeMode.light,
+      builder: (theme, darkTheme) => FluentApp(
+        title: 'Merhaba App',
+        debugShowCheckedModeBanner: false,
+        theme: theme == ThemeData.light(useMaterial3: true)
+            ? FluentThemeData.light()
+            : FluentThemeData.dark(),
+        darkTheme: darkTheme == ThemeData.dark(useMaterial3: true)
+            ? FluentThemeData.dark()
+            : FluentThemeData.light(),
+        // theme: FluentThemeData.dark(),
+        // home: WelcomeScreen(),
+        initialRoute: "/",
+        routes: {
+          "/": (context) => WelcomeScreen(),
+          "/login": (context) => LoginScreen(),
+          "/create_account": (context) => CreateAccountScreen(),
+          "/home": (context) => HomeScreen(),
+          "/app_settings": (context) => AppSettingsScreen(),
+        },
+      ),
     );
   }
 }

@@ -8,6 +8,7 @@ import 'package:merhaba_app/screens/tabs/home/home_tab.dart';
 import 'package:merhaba_app/screens/tabs/notifications/notifications_tab.dart';
 import 'package:merhaba_app/screens/tabs/profile/profile_tab.dart';
 import 'package:merhaba_app/screens/tabs/videos/videos_tab.dart';
+import 'package:merhaba_app/utils/globals.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -46,31 +47,41 @@ class HomeScreen extends StatelessWidget {
             icon: const Icon(CupertinoIcons.home),
             title: ("Home"),
             activeColorPrimary: CupertinoColors.activeBlue,
-            inactiveColorPrimary: CupertinoColors.systemGrey,
+            inactiveColorPrimary: Globals.theme == "Dark"
+                ? CupertinoColors.systemGrey
+                : CupertinoColors.white,
           ),
           PersistentBottomNavBarItem(
             icon: const Icon(CupertinoIcons.group),
             title: ("Friends"),
             activeColorPrimary: CupertinoColors.activeBlue,
-            inactiveColorPrimary: CupertinoColors.systemGrey,
+            inactiveColorPrimary: Globals.theme == "Dark"
+                ? CupertinoColors.systemGrey
+                : CupertinoColors.white,
           ),
           PersistentBottomNavBarItem(
             icon: const Icon(CupertinoIcons.video_camera_solid),
             title: ("Videos"),
             activeColorPrimary: CupertinoColors.activeBlue,
-            inactiveColorPrimary: CupertinoColors.systemGrey,
+            inactiveColorPrimary: Globals.theme == "Dark"
+                ? CupertinoColors.systemGrey
+                : CupertinoColors.white,
           ),
           PersistentBottomNavBarItem(
             icon: const Icon(Icons.notifications),
             title: ("Notifications"),
             activeColorPrimary: CupertinoColors.activeBlue,
-            inactiveColorPrimary: CupertinoColors.systemGrey,
+            inactiveColorPrimary: Globals.theme == "Dark"
+                ? CupertinoColors.systemGrey
+                : CupertinoColors.white,
           ),
           PersistentBottomNavBarItem(
             icon: const Icon(Icons.account_circle_sharp),
             title: ("Profile"),
             activeColorPrimary: CupertinoColors.activeBlue,
-            inactiveColorPrimary: CupertinoColors.systemGrey,
+            inactiveColorPrimary: Globals.theme == "Dark"
+                ? CupertinoColors.systemGrey
+                : CupertinoColors.white,
           ),
         ],
         handleAndroidBackButtonPress: true, // Default is true.
@@ -80,7 +91,8 @@ class HomeScreen extends StatelessWidget {
         hideNavigationBarWhenKeyboardAppears: true,
         popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
         padding: const EdgeInsets.only(top: 8),
-        backgroundColor: Colors.grey.shade900,
+        backgroundColor:
+            Globals.theme == "Dark" ? Colors.grey.shade900 : Colors.blueGrey,
         isVisible: homeScreenProvider.isVisible,
         // animationSettings: const NavBarAnimationSettings(
         //   navBarItemAnimation: ItemAnimationSettings(
