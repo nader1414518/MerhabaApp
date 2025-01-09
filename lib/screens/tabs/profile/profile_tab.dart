@@ -5,8 +5,10 @@ import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:merhaba_app/controllers/auth_controller.dart';
+import 'package:merhaba_app/providers/app_settings_provider.dart';
 import 'package:merhaba_app/providers/profile_tab_provider.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
+import 'package:merhaba_app/utils/globals.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:path/path.dart' as path;
@@ -328,6 +330,15 @@ class ProfileTab extends StatelessWidget {
                 ),
               ),
               onTap: () {
+                final appSettingsProvider = Provider.of<AppSettingsProvider>(
+                  context,
+                  listen: false,
+                );
+
+                appSettingsProvider.setIsDark(
+                  Globals.theme == "Dark",
+                );
+
                 Navigator.of(
                   context,
                   rootNavigator: true,
