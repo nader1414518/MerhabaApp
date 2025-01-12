@@ -3,8 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:merhaba_app/firebase_options.dart';
+import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/providers/app_settings_provider.dart';
 import 'package:merhaba_app/providers/create_account_provider.dart';
 import 'package:merhaba_app/providers/home_screen_provider.dart';
@@ -18,6 +20,8 @@ import 'package:merhaba_app/screens/tabs/profile/app_settings_screen.dart';
 import 'package:merhaba_app/utils/globals.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
+
+final FlutterLocalization localization = FlutterLocalization.instance;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +37,12 @@ void main() async {
       url: dotenv.env["SUPABASE_URL"].toString(),
       anonKey: dotenv.env["SUPABASE_KEY"].toString(),
     );
+  } catch (e) {
+    print(e.toString());
+  }
+
+  try {
+    await FlutterLocalization.instance.ensureInitialized();
   } catch (e) {
     print(e.toString());
   }
@@ -81,8 +91,31 @@ void main() async {
   ));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  MyAppState createState() => MyAppState();
+}
+
+class MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    localization.init(
+      mapLocales: [
+        const MapLocale('en', AppLocale.EN),
+        const MapLocale('ar', AppLocale.AR),
+      ],
+      initLanguageCode: 'en',
+    );
+    localization.onTranslatedLanguage = _onTranslatedLanguage;
+    super.initState();
+  }
+
+// the setState function here is a must to add
+  void _onTranslatedLanguage(Locale? locale) {
+    setState(() {});
+  }
 
   // This widget is the root of your application.
   @override
@@ -124,6 +157,8 @@ class MyApp extends StatelessWidget {
             : FluentThemeData.light(),
         // theme: FluentThemeData.dark(),
         // home: WelcomeScreen(),
+        supportedLocales: localization.supportedLocales,
+        localizationsDelegates: localization.localizationsDelegates,
         initialRoute: "/",
         routes: {
           "/": (context) => WelcomeScreen(),
