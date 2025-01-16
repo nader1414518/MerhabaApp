@@ -21,8 +21,14 @@ mixin AppLocale {
   static const String logout_label = "Log Out";
   static const String language_label = "Language";
   static const String dark_mode_label = "Dark Mode";
+  static const String whats_on_your_mind_label = "What's on your mind?";
+  static const String new_post_label = "New Post";
+  static const String publish_label = "Publish";
 
   static const Map<String, dynamic> EN = {
+    new_post_label: "New Post",
+    publish_label: "Publish",
+    whats_on_your_mind_label: "What's on your mind?",
     enter_your_email_label: "Enter your email",
     enter_your_password_label: "Enter your password",
     email_label: "Email",
@@ -48,6 +54,9 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    new_post_label: "منشور جديد",
+    publish_label: "النشر",
+    whats_on_your_mind_label: "ما الذي تفكر به؟",
     enter_your_email_label: "ادخل بريدك الالكتروني",
     enter_your_password_label: "ادخل كلمة المرور",
     email_label: "البريد الالكتروني",
