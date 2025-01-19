@@ -24,8 +24,20 @@ mixin AppLocale {
   static const String whats_on_your_mind_label = "What's on your mind?";
   static const String new_post_label = "New Post";
   static const String publish_label = "Publish";
+  static const String save_label = "Save";
+  static const String type_something_label = "Type something!!";
+  static const String photo_label = "Photo";
+  static const String video_label = "Video";
+  static const String location_label = "Location";
+  static const String occasion_label = "Occasion";
 
   static const Map<String, dynamic> EN = {
+    photo_label: "Photo",
+    video_label: "Video",
+    location_label: "Location",
+    occasion_label: "Occasion",
+    type_something_label: "Type something!!",
+    save_label: "Save",
     new_post_label: "New Post",
     publish_label: "Publish",
     whats_on_your_mind_label: "What's on your mind?",
@@ -54,6 +66,12 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    photo_label: "صورة",
+    video_label: "فيديو",
+    location_label: "موقع",
+    occasion_label: "مناسبة",
+    type_something_label: "اكتب شيئأ ما!!",
+    save_label: "حفظ",
     new_post_label: "منشور جديد",
     publish_label: "النشر",
     whats_on_your_mind_label: "ما الذي تفكر به؟",
