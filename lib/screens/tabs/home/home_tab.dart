@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:merhaba_app/providers/profile_tab_provider.dart';
+import 'package:provider/provider.dart';
 
 class HomeTab extends StatelessWidget {
   @override
@@ -21,9 +23,8 @@ class HomeTab extends StatelessWidget {
           ),
         ),
         body: ListView(
-          padding: const EdgeInsets.symmetric(
-            vertical: 5,
-            horizontal: 0,
+          padding: const EdgeInsets.only(
+            bottom: 5,
           ),
           shrinkWrap: true,
           physics: const ClampingScrollPhysics(),
@@ -45,6 +46,9 @@ class HomeTab extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -73,8 +77,15 @@ class HomeTab extends StatelessWidget {
                   ],
                 ),
               ),
-              onTap: () {
+              onTap: () async {
                 // Go to post screen
+                final profileTabProvider = Provider.of<ProfileTabProvider>(
+                  context,
+                  listen: false,
+                );
+
+                await profileTabProvider.getData();
+
                 Navigator.of(
                   context,
                   rootNavigator: true,
