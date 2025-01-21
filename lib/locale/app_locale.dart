@@ -30,8 +30,16 @@ mixin AppLocale {
   static const String video_label = "Video";
   static const String location_label = "Location";
   static const String occasion_label = "Occasion";
+  static const String public_label = "Public";
+  static const String only_me_label = "Only Me";
+  static const String camera_label = "Camera";
+  static const String gallery_label = "Gallery";
 
   static const Map<String, dynamic> EN = {
+    camera_label: "Camera",
+    gallery_label: "Gallery",
+    public_label: "Public",
+    only_me_label: "Only Me",
     photo_label: "Photo",
     video_label: "Video",
     location_label: "Location",
@@ -66,6 +74,10 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    camera_label: "الكاميرا",
+    gallery_label: "معرض الصور",
+    public_label: "العامة",
+    only_me_label: "انا فقط",
     photo_label: "صورة",
     video_label: "فيديو",
     location_label: "موقع",
