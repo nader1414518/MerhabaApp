@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:merhaba_app/controllers/posts_controller.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -237,7 +241,30 @@ class NewPostScreen extends StatelessWidget {
                                         return;
                                       }
 
-                                      print("Photo >>>>>>>> " + file.name);
+                                      // print("Photo >>>>>>>> " + file.name);
+                                      var uploadRes =
+                                          await PostsController.uploadPostMedia(
+                                        File(
+                                          file.path,
+                                        ),
+                                      );
+
+                                      print(uploadRes);
+
+                                      if (uploadRes["result"] == true) {
+                                        var url = uploadRes["url"];
+                                        var filename = uploadRes["filename"];
+
+                                        newPostProvider.addNewPhoto({
+                                          "url": url,
+                                          "filename": filename,
+                                        });
+                                      } else {
+                                        Fluttertoast.showToast(
+                                          msg: uploadRes["message"].toString(),
+                                        );
+                                      }
+
                                       Navigator.of(context).pop();
 
                                       // Navigator.pop(
@@ -260,7 +287,29 @@ class NewPostScreen extends StatelessWidget {
                                       );
 
                                       for (var file in files) {
-                                        print(file.name);
+                                        var uploadRes = await PostsController
+                                            .uploadPostMedia(
+                                          File(
+                                            file.path,
+                                          ),
+                                        );
+
+                                        print(uploadRes);
+
+                                        if (uploadRes["result"] == true) {
+                                          var url = uploadRes["url"];
+                                          var filename = uploadRes["filename"];
+
+                                          newPostProvider.addNewPhoto({
+                                            "url": url,
+                                            "filename": filename,
+                                          });
+                                        } else {
+                                          Fluttertoast.showToast(
+                                            msg:
+                                                uploadRes["message"].toString(),
+                                          );
+                                        }
                                       }
 
                                       Navigator.of(context).pop();
