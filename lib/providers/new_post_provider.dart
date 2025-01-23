@@ -10,6 +10,24 @@ class NewPostProvider with ChangeNotifier {
   String _currentPostMode = "friends";
   String get currentPostMode => _currentPostMode;
 
+  List<Map<String, dynamic>> _photos = [];
+  List<Map<String, dynamic>> get photos => _photos;
+
+  addNewPhoto(Map<String, dynamic> data) {
+    _photos.add(data);
+    notifyListeners();
+  }
+
+  addNewPhotos(List<Map<String, dynamic>> data) {
+    _photos.addAll(data);
+    notifyListeners();
+  }
+
+  clearPhotos() {
+    _photos.clear();
+    notifyListeners();
+  }
+
   setCurrentPostMode(String value) {
     _currentPostMode = value;
     notifyListeners();
