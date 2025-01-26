@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_controller.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,6 +17,8 @@ import 'package:provider/provider.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 
 class NewPostScreen extends StatelessWidget {
+  final CarouselSliderController _controller = CarouselSliderController();
+
   @override
   Widget build(BuildContext context) {
     final profileTabProvider = Provider.of<ProfileTabProvider>(
@@ -182,6 +186,84 @@ class NewPostScreen extends StatelessWidget {
                       maxLines: 20,
                     ),
                   ),
+                  newPostProvider.photos.isEmpty
+                      ? Container()
+                      : Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 20,
+                          ),
+                          child: Column(
+                            children: [
+                              CarouselSlider(
+                                items: newPostProvider.photos
+                                    .map(
+                                      (item) => CachedNetworkImage(
+                                        imageUrl: item["url"].toString(),
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                                Container(
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        placeholder: (context, url) =>
+                                            const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            const Center(
+                                          child: Icon(Icons.error),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                                carouselController: _controller,
+                                options: CarouselOptions(
+                                  autoPlay: true,
+                                  enlargeCenterPage: true,
+                                  aspectRatio: 2.0,
+                                  onPageChanged: (index, reason) {
+                                    newPostProvider.setCurrentPhotoIndex(index);
+                                  },
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: newPostProvider.photos
+                                    .asMap()
+                                    .entries
+                                    .map((entry) {
+                                  return GestureDetector(
+                                    onTap: () =>
+                                        _controller.animateToPage(entry.key),
+                                    child: Container(
+                                      width: 12.0,
+                                      height: 12.0,
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 8.0, horizontal: 4.0),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: (Theme.of(context).brightness ==
+                                                    Brightness.dark
+                                                ? Colors.white
+                                                : Colors.black)
+                                            .withOpacity(
+                                          newPostProvider.currentPhotoIndex ==
+                                                  entry.key
+                                              ? 0.9
+                                              : 0.4,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ],
+                          ),
+                        ),
                   Container(
                     margin: const EdgeInsets.only(top: 20),
                     padding: const EdgeInsets.symmetric(
