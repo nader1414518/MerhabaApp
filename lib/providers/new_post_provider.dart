@@ -10,8 +10,8 @@ class NewPostProvider with ChangeNotifier {
   String _currentPostMode = "friends";
   String get currentPostMode => _currentPostMode;
 
-  List<Map<String, dynamic>> _photos = [];
-  List<Map<String, dynamic>> get photos => _photos;
+  List<Map<String, dynamic>> _media = [];
+  List<Map<String, dynamic>> get media => _media;
 
   int _currentPhotoIndex = 0;
   int get currentPhotoIndex => _currentPhotoIndex;
@@ -21,18 +21,18 @@ class NewPostProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  addNewPhoto(Map<String, dynamic> data) {
-    _photos.add(data);
+  addNewMedia(Map<String, dynamic> data) {
+    _media.add(data);
     notifyListeners();
   }
 
-  addNewPhotos(List<Map<String, dynamic>> data) {
-    _photos.addAll(data);
+  addNewMedias(List<Map<String, dynamic>> data) {
+    _media.addAll(data);
     notifyListeners();
   }
 
-  clearPhotos() {
-    _photos.clear();
+  clearMedia() {
+    _media.clear();
     notifyListeners();
   }
 
