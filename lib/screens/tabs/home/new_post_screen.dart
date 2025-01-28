@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,6 +16,7 @@ import 'package:merhaba_app/providers/profile_tab_provider.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
+import 'package:video_player/video_player.dart';
 
 class NewPostScreen extends StatelessWidget {
   final CarouselSliderController _controller = CarouselSliderController();
@@ -186,7 +188,7 @@ class NewPostScreen extends StatelessWidget {
                       maxLines: 20,
                     ),
                   ),
-                  newPostProvider.photos.isEmpty
+                  newPostProvider.media.isEmpty
                       ? Container()
                       : Container(
                           padding: const EdgeInsets.symmetric(
@@ -195,29 +197,45 @@ class NewPostScreen extends StatelessWidget {
                           child: Column(
                             children: [
                               CarouselSlider(
-                                items: newPostProvider.photos
+                                items: newPostProvider.media
                                     .map(
-                                      (item) => CachedNetworkImage(
-                                        imageUrl: item["url"].toString(),
-                                        imageBuilder:
-                                            (context, imageProvider) =>
-                                                Container(
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: imageProvider,
-                                              fit: BoxFit.cover,
+                                      (item) => item["type"] == "photo"
+                                          ? CachedNetworkImage(
+                                              imageUrl: item["url"].toString(),
+                                              imageBuilder:
+                                                  (context, imageProvider) =>
+                                                      Container(
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                              placeholder: (context, url) =>
+                                                  const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Center(
+                                                child: Icon(Icons.error),
+                                              ),
+                                            )
+                                          : Container(
+                                              child: FlickVideoPlayer(
+                                                flickManager: FlickManager(
+                                                  videoPlayerController:
+                                                      VideoPlayerController
+                                                          .networkUrl(
+                                                    Uri.parse(
+                                                      item["url"].toString(),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
-                                        placeholder: (context, url) =>
-                                            const Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            const Center(
-                                          child: Icon(Icons.error),
-                                        ),
-                                      ),
                                     )
                                     .toList(),
                                 carouselController: _controller,
@@ -232,7 +250,7 @@ class NewPostScreen extends StatelessWidget {
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: newPostProvider.photos
+                                children: newPostProvider.media
                                     .asMap()
                                     .entries
                                     .map((entry) {
@@ -299,10 +317,6 @@ class NewPostScreen extends StatelessWidget {
                             showDialog<String>(
                               context: context,
                               builder: (context) => fluent.ContentDialog(
-                                // title: const Text('Delete file permanently?'),
-                                // content: const Text(
-                                //   'If you delete this file, you won\'t be able to recover it. Do you want to delete it?',
-                                // ),
                                 actions: [
                                   fluent.Button(
                                     child: Text(
@@ -337,7 +351,8 @@ class NewPostScreen extends StatelessWidget {
                                         var url = uploadRes["url"];
                                         var filename = uploadRes["filename"];
 
-                                        newPostProvider.addNewPhoto({
+                                        newPostProvider.addNewMedia({
+                                          "type": "photo",
                                           "url": url,
                                           "filename": filename,
                                         });
@@ -382,7 +397,8 @@ class NewPostScreen extends StatelessWidget {
                                           var url = uploadRes["url"];
                                           var filename = uploadRes["filename"];
 
-                                          newPostProvider.addNewPhoto({
+                                          newPostProvider.addNewMedia({
+                                            "type": "photo",
                                             "url": url,
                                             "filename": filename,
                                           });
@@ -423,7 +439,107 @@ class NewPostScreen extends StatelessWidget {
                           trailing: const Icon(
                             Icons.video_camera_back,
                           ),
-                          onTap: () {},
+                          onTap: () {
+                            showDialog<String>(
+                              context: context,
+                              builder: (context) => fluent.ContentDialog(
+                                actions: [
+                                  fluent.Button(
+                                    child: Text(
+                                      AppLocale.camera_label.getString(
+                                        context,
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      ImagePicker imagePicker = ImagePicker();
+
+                                      var file = await imagePicker.pickVideo(
+                                        source: ImageSource.camera,
+                                      );
+
+                                      if (file == null) {
+                                        Navigator.of(context).pop();
+                                        return;
+                                      }
+
+                                      // print("Photo >>>>>>>> " + file.name);
+                                      var uploadRes =
+                                          await PostsController.uploadPostMedia(
+                                        File(
+                                          file.path,
+                                        ),
+                                      );
+
+                                      print(uploadRes);
+
+                                      if (uploadRes["result"] == true) {
+                                        var url = uploadRes["url"];
+                                        var filename = uploadRes["filename"];
+
+                                        newPostProvider.addNewMedia({
+                                          "type": "video",
+                                          "url": url,
+                                          "filename": filename,
+                                        });
+                                      } else {
+                                        Fluttertoast.showToast(
+                                          msg: uploadRes["message"].toString(),
+                                        );
+                                      }
+
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  fluent.Button(
+                                    child: Text(
+                                      AppLocale.gallery_label.getString(
+                                        context,
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      ImagePicker imagePicker = ImagePicker();
+
+                                      var file = await imagePicker.pickVideo(
+                                        source: ImageSource.gallery,
+                                      );
+
+                                      if (file == null) {
+                                        Navigator.of(context).pop();
+                                        return;
+                                      }
+
+                                      // print("Photo >>>>>>>> " + file.name);
+                                      var uploadRes =
+                                          await PostsController.uploadPostMedia(
+                                        File(
+                                          file.path,
+                                        ),
+                                      );
+
+                                      print(uploadRes);
+
+                                      if (uploadRes["result"] == true) {
+                                        var url = uploadRes["url"];
+                                        var filename = uploadRes["filename"];
+
+                                        newPostProvider.addNewMedia({
+                                          "type": "video",
+                                          "url": url,
+                                          "filename": filename,
+                                        });
+                                      } else {
+                                        Fluttertoast.showToast(
+                                          msg: uploadRes["message"].toString(),
+                                        );
+                                      }
+
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                         const SizedBox(
                           height: 5,
