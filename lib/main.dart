@@ -10,6 +10,7 @@ import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/providers/app_settings_provider.dart';
 import 'package:merhaba_app/providers/create_account_provider.dart';
 import 'package:merhaba_app/providers/home_screen_provider.dart';
+import 'package:merhaba_app/providers/location_viewer_provider.dart';
 import 'package:merhaba_app/providers/login_provider.dart';
 import 'package:merhaba_app/providers/new_post_provider.dart';
 import 'package:merhaba_app/providers/profile_tab_provider.dart';
@@ -17,6 +18,7 @@ import 'package:merhaba_app/screens/authentication/create_account_screen.dart';
 import 'package:merhaba_app/screens/authentication/login_screen.dart';
 import 'package:merhaba_app/screens/general/home_screen.dart';
 import 'package:merhaba_app/screens/general/welcome_screen.dart';
+import 'package:merhaba_app/screens/location/location_viewer.dart';
 import 'package:merhaba_app/screens/tabs/home/new_post_screen.dart';
 import 'package:merhaba_app/screens/tabs/profile/app_settings_screen.dart';
 import 'package:merhaba_app/utils/globals.dart';
@@ -90,6 +92,9 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (_) => NewPostProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => LocationViewerProvider(),
       ),
     ],
     child: const MyApp(),
@@ -172,6 +177,7 @@ class MyAppState extends State<MyApp> {
           "/home": (context) => HomeScreen(),
           "/app_settings": (context) => AppSettingsScreen(),
           "/new_post": (context) => NewPostScreen(),
+          "/location_viewer": (context) => LocationViewerScreen(),
         },
       ),
     );

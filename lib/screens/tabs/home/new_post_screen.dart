@@ -11,6 +11,7 @@ import 'package:merhaba_app/controllers/posts_controller.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:merhaba_app/providers/location_viewer_provider.dart';
 import 'package:merhaba_app/providers/new_post_provider.dart';
 import 'package:merhaba_app/providers/profile_tab_provider.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
@@ -169,6 +170,25 @@ class NewPostScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  newPostProvider.locationData.isEmpty
+                      ? Container()
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: () {},
+                              label: Text(
+                                AppLocale.location_label.getString(
+                                  context,
+                                ),
+                              ),
+                              icon: const Icon(Icons.location_pin),
+                            ),
+                          ],
+                        ),
                   const SizedBox(
                     height: 30,
                   ),
@@ -558,7 +578,31 @@ class NewPostScreen extends StatelessWidget {
                           trailing: const Icon(
                             Icons.location_pin,
                           ),
-                          onTap: () {},
+                          onTap: () async {
+                            await Navigator.of(context).pushNamed(
+                              "/location_viewer",
+                            );
+
+                            final locationViewerProvider =
+                                Provider.of<LocationViewerProvider>(
+                              context,
+                              listen: false,
+                            );
+
+                            // print(
+                            //   locationViewerProvider.currentLocation.toMap(),
+                            // );
+                            if (locationViewerProvider
+                                        .currentLocation.latitude !=
+                                    0 &&
+                                locationViewerProvider
+                                        .currentLocation.longitude !=
+                                    0) {
+                              newPostProvider.setLocationData(
+                                locationViewerProvider.currentLocation.toMap(),
+                              );
+                            }
+                          },
                         ),
                         const SizedBox(
                           height: 5,
