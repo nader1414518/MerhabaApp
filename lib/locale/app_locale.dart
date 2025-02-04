@@ -36,8 +36,18 @@ mixin AppLocale {
   static const String gallery_label = "Gallery";
   static const String location_viewer_label = "Location Viewer";
   static const String confirm_location_label = "Confirm Location";
+  static const String confirm_label = "Confirm";
+  static const String graduation_label = "Graduation";
+  static const String engagement_label = "Engagement";
+  static const String marriage_label = "Marriage";
+  static const String cancel_label = "Cancel";
 
   static const Map<String, dynamic> EN = {
+    cancel_label: "Cancel",
+    confirm_label: "Confirm",
+    graduation_label: "Graduation",
+    engagement_label: "Engagement",
+    marriage_label: "Marriage",
     confirm_location_label: "Confirm Location",
     location_viewer_label: "Location Viewer",
     camera_label: "Camera",
@@ -78,6 +88,11 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    cancel_label: "الغاء",
+    confirm_label: "تاكيد",
+    graduation_label: "التخرج",
+    engagement_label: "الخطوبة",
+    marriage_label: "الزواج",
     confirm_location_label: "تاكيد الموقع",
     location_viewer_label: "عرض الموقع",
     camera_label: "الكاميرا",
