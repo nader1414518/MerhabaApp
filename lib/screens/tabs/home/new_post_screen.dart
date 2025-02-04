@@ -173,22 +173,57 @@ class NewPostScreen extends StatelessWidget {
                   const SizedBox(
                     height: 5,
                   ),
-                  newPostProvider.locationData.isEmpty
-                      ? Container()
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            ElevatedButton.icon(
-                              onPressed: () {},
-                              label: Text(
-                                AppLocale.location_label.getString(
-                                  context,
-                                ),
+                  Container(
+                    height: 30,
+                    child: ListView(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      physics: const ClampingScrollPhysics(),
+                      children: [
+                        newPostProvider.locationData.isEmpty
+                            ? Container()
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  ElevatedButton.icon(
+                                    onPressed: () {},
+                                    label: Text(
+                                      AppLocale.location_label.getString(
+                                        context,
+                                      ),
+                                    ),
+                                    icon: const Icon(Icons.location_pin),
+                                  ),
+                                ],
                               ),
-                              icon: const Icon(Icons.location_pin),
-                            ),
-                          ],
-                        ),
+                        newPostProvider.isOccasionSelected
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  ElevatedButton.icon(
+                                    onPressed: () {},
+                                    label: Text(
+                                      newPostProvider
+                                          .getOccasionsOptions(context)
+                                          .firstWhere((element) =>
+                                              element["value"] ==
+                                              newPostProvider
+                                                  .selectedOccasion)["label"]
+                                          .toString(),
+                                    ),
+                                    icon: newPostProvider
+                                        .getOccasionsOptions(context)
+                                        .firstWhere((element) =>
+                                            element["value"] ==
+                                            newPostProvider
+                                                .selectedOccasion)["icon"],
+                                  ),
+                                ],
+                              )
+                            : Container()
+                      ],
+                    ),
+                  ),
                   const SizedBox(
                     height: 30,
                   ),
@@ -621,7 +656,81 @@ class NewPostScreen extends StatelessWidget {
                           trailing: const Icon(
                             Icons.announcement,
                           ),
-                          onTap: () {},
+                          onTap: () {
+                            showDialog<String>(
+                              context: context,
+                              builder: (context) => fluent.ContentDialog(
+                                title: Text(
+                                  AppLocale.occasion_label.getString(
+                                    context,
+                                  ),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                content: Consumer<NewPostProvider>(
+                                    builder: (context, myProvider, child) {
+                                  return Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          fluent.ComboBox<String>(
+                                            value: myProvider.selectedOccasion,
+                                            items: myProvider
+                                                .getOccasionsOptions(context)
+                                                .map((e) {
+                                              return fluent.ComboBoxItem(
+                                                value: e["value"].toString(),
+                                                child: Text(
+                                                  e["label"].toString(),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            onChanged: (value) {
+                                              if (value == null) {
+                                                return;
+                                              }
+
+                                              newPostProvider
+                                                  .setSelectedOccasion(
+                                                value,
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                }),
+                                actions: [
+                                  fluent.Button(
+                                    child: Text(
+                                      AppLocale.confirm_label.getString(
+                                        context,
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  fluent.Button(
+                                    child: Text(
+                                      AppLocale.cancel_label.getString(
+                                        context,
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),

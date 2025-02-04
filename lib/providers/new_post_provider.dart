@@ -19,6 +19,29 @@ class NewPostProvider with ChangeNotifier {
   Map<String, dynamic> _locationData = {};
   Map<String, dynamic> get locationData => _locationData;
 
+  bool _isOccasionSelected = false;
+  bool get isOccasionSelected => _isOccasionSelected;
+
+  String _selectedOccasion = "graduation";
+  String get selectedOccasion => _selectedOccasion;
+
+  setSelectedOccasion(String value) {
+    toggleLoading();
+
+    try {
+      _selectedOccasion = value;
+      _isOccasionSelected = true;
+      notifyListeners();
+    } catch (e) {}
+
+    toggleLoading();
+  }
+
+  setIsOcassionSelected(bool value) {
+    _isOccasionSelected = value;
+    notifyListeners();
+  }
+
   setLocationData(Map<String, dynamic> value) {
     _locationData = value;
     notifyListeners();
@@ -76,6 +99,40 @@ class NewPostProvider with ChangeNotifier {
         "value": "only_me",
         "icon": const Icon(
           Icons.remove_red_eye,
+        ),
+      },
+    ];
+
+    return list;
+  }
+
+  List<Map<String, dynamic>> getOccasionsOptions(BuildContext context) {
+    List<Map<String, dynamic>> list = [
+      {
+        "label": AppLocale.graduation_label.getString(
+          context,
+        ),
+        "value": "graduation",
+        "icon": const Icon(
+          Icons.account_balance,
+        ),
+      },
+      {
+        "label": AppLocale.engagement_label.getString(
+          context,
+        ),
+        "value": "engagement",
+        "icon": const Icon(
+          Icons.circle_outlined,
+        ),
+      },
+      {
+        "label": AppLocale.marriage_label.getString(
+          context,
+        ),
+        "value": "marriage",
+        "icon": const Icon(
+          Icons.female,
         ),
       },
     ];
