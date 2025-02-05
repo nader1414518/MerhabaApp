@@ -41,8 +41,12 @@ mixin AppLocale {
   static const String engagement_label = "Engagement";
   static const String marriage_label = "Marriage";
   static const String cancel_label = "Cancel";
+  static const String something_went_wrong_label = "Something went wrong!!";
+  static const String posted_label = "Posted";
 
   static const Map<String, dynamic> EN = {
+    posted_label: "Posted",
+    something_went_wrong_label: "Something went wrong!!",
     cancel_label: "Cancel",
     confirm_label: "Confirm",
     graduation_label: "Graduation",
@@ -88,6 +92,8 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    posted_label: "تم النشر",
+    something_went_wrong_label: "حدث خطأ ما!!",
     cancel_label: "الغاء",
     confirm_label: "تاكيد",
     graduation_label: "التخرج",
