@@ -26,6 +26,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 
 final FlutterLocalization localization = FlutterLocalization.instance;
+final FlutterSecureStorage secureStorage = FlutterSecureStorage(
+  aOptions: AndroidOptions(
+    encryptedSharedPreferences: true,
+  ),
+  iOptions: IOSOptions(
+    accessibility: KeychainAccessibility.first_unlock,
+  ),
+);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

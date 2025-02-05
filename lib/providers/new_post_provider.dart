@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:merhaba_app/controllers/posts_controller.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 
 class NewPostProvider with ChangeNotifier {
@@ -24,6 +28,55 @@ class NewPostProvider with ChangeNotifier {
 
   String _selectedOccasion = "graduation";
   String get selectedOccasion => _selectedOccasion;
+
+  TextEditingController _textController = TextEditingController();
+  TextEditingController get textController => _textController;
+
+  Future<void> onAdd(BuildContext context) async {
+    if (_textController.text == "") {
+      return;
+    }
+
+    toggleLoading();
+
+    try {
+      var res = await PostsController.addPost(
+        {
+          "content": jsonEncode({
+            "text": _textController.text,
+            "media": _media,
+            "location": _locationData,
+            "occasion": _selectedOccasion,
+          }),
+        },
+      );
+
+      if (res["result"] == true) {
+        Fluttertoast.showToast(
+          msg: AppLocale.posted_label.getString(
+            context,
+          ),
+        );
+      } else {
+        Fluttertoast.showToast(
+          msg: AppLocale.something_went_wrong_label.getString(
+            context,
+          ),
+        );
+      }
+
+      Navigator.of(context).pop();
+    } catch (e) {
+      print(e.toString());
+      Fluttertoast.showToast(
+        msg: AppLocale.something_went_wrong_label.getString(
+          context,
+        ),
+      );
+    }
+
+    toggleLoading();
+  }
 
   setSelectedOccasion(String value) {
     toggleLoading();

@@ -53,7 +53,11 @@ class NewPostScreen extends StatelessWidget {
           ),
           actions: [
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                newPostProvider.onAdd(
+                  context,
+                );
+              },
               child: Text(
                 AppLocale.save_label.getString(
                   context,
@@ -241,6 +245,7 @@ class NewPostScreen extends StatelessWidget {
                       ),
                       minLines: 3,
                       maxLines: 20,
+                      controller: newPostProvider.textController,
                     ),
                   ),
                   newPostProvider.media.isEmpty
