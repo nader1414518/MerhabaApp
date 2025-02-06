@@ -14,6 +14,7 @@ import 'package:merhaba_app/providers/location_viewer_provider.dart';
 import 'package:merhaba_app/providers/login_provider.dart';
 import 'package:merhaba_app/providers/new_post_provider.dart';
 import 'package:merhaba_app/providers/profile_tab_provider.dart';
+import 'package:merhaba_app/providers/timeline_provider.dart';
 import 'package:merhaba_app/screens/authentication/create_account_screen.dart';
 import 'package:merhaba_app/screens/authentication/login_screen.dart';
 import 'package:merhaba_app/screens/general/home_screen.dart';
@@ -103,6 +104,9 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (_) => LocationViewerProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => TimelineProvider(),
       ),
     ],
     child: const MyApp(),

@@ -6,6 +6,17 @@ import 'package:path/path.dart' as p;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PostsController {
+  static Future<List<Map<String, dynamic>>> getAllPosts() async {
+    try {
+      var res = await Supabase.instance.client.from("posts").select();
+
+      return res;
+    } catch (e) {
+      print(e.toString());
+      return [];
+    }
+  }
+
   static Future<Map<String, dynamic>> addPost(Map<String, dynamic> data) async {
     try {
       var uid = await secureStorage.read(
@@ -19,6 +30,23 @@ class PostsController {
         };
       }
 
+      var currentUserDataRes = await AuthController.getCurrentUserData();
+
+      if (currentUserDataRes["result"] == false) {
+        return currentUserDataRes;
+      }
+
+      Map<String, dynamic> currentUserData = Map<String, dynamic>.from(
+        currentUserDataRes["data"] as Map,
+      );
+
+      var userData = currentUserData["data"]["user_metadata"];
+      var username = userData["fullName"].toString();
+      var photoUrl =
+          userData["picUrl"] == null ? "" : userData["picUrl"].toString();
+
+      data["username"] = username;
+      data["user_photo"] = photoUrl;
       data["user_id"] = uid;
       data["added_by"] = uid;
       data["updated_by"] = "";
