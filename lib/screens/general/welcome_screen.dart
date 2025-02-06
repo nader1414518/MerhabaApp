@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:merhaba_app/controllers/auth_controller.dart';
+import 'package:merhaba_app/providers/timeline_provider.dart';
 import 'package:merhaba_app/screens/authentication/login_screen.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
+import 'package:provider/provider.dart';
 
 class WelcomeScreen extends StatefulWidget {
   @override
@@ -38,6 +40,12 @@ class WelcomeScreenState extends State<WelcomeScreen> {
     try {
       var res = await AuthController.checkLogin();
       if (res["result"] == true) {
+        final timelineProvider = Provider.of<TimelineProvider>(
+          context,
+        );
+
+        timelineProvider.getData();
+
         Navigator.of(context).pushNamed("/home");
       } else {
         Navigator.of(context).pushNamed("/login");
