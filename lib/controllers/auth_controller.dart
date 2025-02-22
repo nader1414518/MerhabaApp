@@ -186,6 +186,8 @@ class AuthController {
 
       var res = Supabase.instance.client.auth.currentUser!.toJson();
 
+      // print(res);
+
       return {
         "result": true,
         "message": "Retrieved successfully .. ",
