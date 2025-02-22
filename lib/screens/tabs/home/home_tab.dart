@@ -5,11 +5,17 @@ import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:merhaba_app/providers/profile_tab_provider.dart';
+import 'package:merhaba_app/providers/timeline_provider.dart';
+import 'package:merhaba_app/widgets/post_widget.dart';
 import 'package:provider/provider.dart';
 
 class HomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final timeLineProvider = Provider.of<TimelineProvider>(
+      context,
+    );
+
     return Directionality(
       textDirection: localization.currentLocale.localeIdentifier == "ar"
           ? TextDirection.rtl
@@ -114,6 +120,16 @@ class HomeTab extends StatelessWidget {
                   duration: 1200.ms,
                   alignment: Alignment.centerLeft,
                 ),
+            ...timeLineProvider.posts.map((post) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 5,
+                ),
+                child: PostWidget(
+                  post: post,
+                ),
+              );
+            })
           ],
         ),
       ),

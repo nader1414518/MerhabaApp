@@ -107,6 +107,7 @@ class LoginScreen extends StatelessWidget {
                               final timelineProvider =
                                   Provider.of<TimelineProvider>(
                                 context,
+                                listen: false,
                               );
 
                               timelineProvider.getData();

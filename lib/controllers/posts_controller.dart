@@ -40,7 +40,9 @@ class PostsController {
         currentUserDataRes["data"] as Map,
       );
 
-      var userData = currentUserData["data"]["user_metadata"];
+      // print(currentUserData["data"]);
+
+      var userData = currentUserData["user_metadata"];
       var username = userData["fullName"].toString();
       var photoUrl =
           userData["picUrl"] == null ? "" : userData["picUrl"].toString();
