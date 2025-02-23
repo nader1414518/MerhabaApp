@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -121,9 +123,13 @@ class HomeTab extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                 ),
             ...timeLineProvider.posts.map((post) {
+              post["parsedContent"] = Map<String, dynamic>.from(
+                jsonDecode(post["content"]) as Map,
+              );
+
               return Padding(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 5,
+                  vertical: 1,
                 ),
                 child: PostWidget(
                   post: post,
