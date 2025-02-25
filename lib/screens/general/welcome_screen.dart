@@ -42,6 +42,7 @@ class WelcomeScreenState extends State<WelcomeScreen> {
       if (res["result"] == true) {
         final timelineProvider = Provider.of<TimelineProvider>(
           context,
+          listen: false,
         );
 
         timelineProvider.getData();

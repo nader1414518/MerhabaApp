@@ -43,8 +43,14 @@ mixin AppLocale {
   static const String cancel_label = "Cancel";
   static const String something_went_wrong_label = "Something went wrong!!";
   static const String posted_label = "Posted";
+  static const String like_label = "Like";
+  static const String comment_label = "Comment";
+  static const String share_label = "Share";
 
   static const Map<String, dynamic> EN = {
+    like_label: "Like",
+    comment_label: "Comment",
+    share_label: "Share",
     posted_label: "Posted",
     something_went_wrong_label: "Something went wrong!!",
     cancel_label: "Cancel",
@@ -92,6 +98,9 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    like_label: "اعجبني",
+    comment_label: "تعليق",
+    share_label: "مشاركة",
     posted_label: "تم النشر",
     something_went_wrong_label: "حدث خطأ ما!!",
     cancel_label: "الغاء",

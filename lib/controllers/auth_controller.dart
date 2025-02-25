@@ -122,6 +122,8 @@ class AuthController {
         };
       }
 
+      print(isLoggedIn);
+
       var email = await secureStorage.read(key: "login_email");
       var password = await secureStorage.read(key: "login_password");
 

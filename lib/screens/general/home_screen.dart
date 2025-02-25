@@ -6,6 +6,7 @@ import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/home_screen_provider.dart';
 import 'package:merhaba_app/providers/profile_tab_provider.dart';
+import 'package:merhaba_app/providers/timeline_provider.dart';
 import 'package:merhaba_app/screens/tabs/friends/friends_tab.dart';
 import 'package:merhaba_app/screens/tabs/home/home_tab.dart';
 import 'package:merhaba_app/screens/tabs/notifications/notifications_tab.dart';
@@ -40,6 +41,15 @@ class HomeScreen extends StatelessWidget {
           ],
           onItemSelected: (value) {
             // print(value);
+            if (value == 0) {
+              final timeLineProvider = Provider.of<TimelineProvider>(
+                context,
+                listen: false,
+              );
+
+              timeLineProvider.getData();
+            }
+
             if (value == 4) {
               final profileTabProvider = Provider.of<ProfileTabProvider>(
                 context,
