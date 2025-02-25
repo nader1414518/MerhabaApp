@@ -26,6 +26,7 @@ dependencies:
   flick_video_player: ^0.9.0
   flutter_osm_plugin: ^1.3.6
   flutter_animate: ^4.5.2
+  swipe_refresh: ^1.1.2
 
   cupertino_icons: ^1.0.8
   supabase_flutter: ^2.8.2

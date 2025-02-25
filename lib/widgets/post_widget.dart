@@ -3,6 +3,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:merhaba_app/locale/app_locale.dart';
+import 'package:merhaba_app/providers/app_settings_provider.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
 import 'package:video_player/video_player.dart';
 
@@ -146,88 +149,189 @@ class _PostWidgetState extends State<PostWidget> {
                     widget.post["parsedContent"]["media"].toString() == "" ||
                             widget.post["parsedContent"]["media"].isEmpty
                         ? Container()
-                        : CarouselSlider(
-                            items: (widget.post["parsedContent"]["media"]
-                                    as List)
-                                .map(
-                                  (item) => item["type"] == "photo"
-                                      ? CachedNetworkImage(
-                                          imageUrl: item["url"].toString(),
-                                          imageBuilder:
-                                              (context, imageProvider) =>
-                                                  Container(
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                image: imageProvider,
-                                                fit: BoxFit.cover,
+                        : Stack(
+                            children: [
+                              CarouselSlider(
+                                items: (widget.post["parsedContent"]["media"]
+                                        as List)
+                                    .map(
+                                      (item) => item["type"] == "photo"
+                                          ? CachedNetworkImage(
+                                              imageUrl: item["url"].toString(),
+                                              imageBuilder:
+                                                  (context, imageProvider) =>
+                                                      Container(
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                          placeholder: (context, url) =>
-                                              const Center(
-                                            child: CircularProgressIndicator(),
-                                          ),
-                                          errorWidget: (context, url, error) =>
-                                              const Center(
-                                            child: Icon(Icons.error),
-                                          ),
-                                        )
-                                      : Container(
-                                          child: FlickVideoPlayer(
-                                            flickManager: FlickManager(
-                                              videoPlayerController:
-                                                  VideoPlayerController
-                                                      .networkUrl(
-                                                Uri.parse(
-                                                  item["url"].toString(),
+                                              placeholder: (context, url) =>
+                                                  const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Center(
+                                                child: Icon(Icons.error),
+                                              ),
+                                            )
+                                          : Container(
+                                              child: FlickVideoPlayer(
+                                                flickManager: FlickManager(
+                                                  videoPlayerController:
+                                                      VideoPlayerController
+                                                          .networkUrl(
+                                                    Uri.parse(
+                                                      item["url"].toString(),
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                )
-                                .toList(),
-                            carouselController: _controller,
-                            options: CarouselOptions(
-                              autoPlay: false,
-                              enlargeCenterPage: false,
-                              aspectRatio: 2.0,
-                              onPageChanged: (index, reason) {
-                                setState(() {
-                                  currentIndex = index;
-                                });
-                              },
-                              viewportFraction: 1.0,
-                            ),
-                          ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: (widget.post["parsedContent"]["media"] as List)
-                          .asMap()
-                          .entries
-                          .map((entry) {
-                        return GestureDetector(
-                          onTap: () => _controller.animateToPage(entry.key),
-                          child: Container(
-                            width: 12.0,
-                            height: 12.0,
-                            margin: const EdgeInsets.symmetric(
-                              vertical: 8.0,
-                              horizontal: 4.0,
-                            ),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: (Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.white
-                                      : Colors.black)
-                                  .withOpacity(
-                                currentIndex == entry.key ? 0.9 : 0.4,
+                                    )
+                                    .toList(),
+                                carouselController: _controller,
+                                options: CarouselOptions(
+                                  autoPlay: false,
+                                  enlargeCenterPage: false,
+                                  aspectRatio: 2.0,
+                                  onPageChanged: (index, reason) {
+                                    setState(() {
+                                      currentIndex = index;
+                                    });
+                                  },
+                                  viewportFraction: 1.0,
+                                ),
                               ),
-                            ),
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(
+                                        0.8,
+                                      ),
+                                      borderRadius: BorderRadius.circular(
+                                        30,
+                                      ),
+                                    ),
+                                    padding: const EdgeInsets.all(
+                                      5,
+                                    ),
+                                    child: Text(
+                                      "${(currentIndex + 1)}/${widget.post["parsedContent"]["media"].length}",
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        );
-                      }).toList(),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    const Divider(),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () {},
+                          label: Text(
+                            AppLocale.like_label.getString(
+                              context,
+                            ),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          icon: const Icon(
+                            fluent.FluentIcons.like,
+                            size: 15,
+                          ),
+                          style: const ButtonStyle(
+                            elevation: WidgetStatePropertyAll(
+                              1,
+                            ),
+                            visualDensity: VisualDensity.compact,
+                            // shape: WidgetStatePropertyAll(
+                            //   RoundedRectangleBorder(
+                            //     borderRadius: BorderRadius.circular(
+                            //       5,
+                            //     ),
+                            //   ),
+                            // ),
+                          ),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () {},
+                          label: Text(
+                            AppLocale.comment_label.getString(
+                              context,
+                            ),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          icon: const Icon(
+                            fluent.FluentIcons.comment,
+                            size: 15,
+                          ),
+                          style: const ButtonStyle(
+                            elevation: WidgetStatePropertyAll(
+                              1,
+                            ),
+                            visualDensity: VisualDensity.compact,
+                            // shape: WidgetStatePropertyAll(
+                            //   RoundedRectangleBorder(
+                            //     borderRadius: BorderRadius.circular(
+                            //       5,
+                            //     ),
+                            //   ),
+                            // ),
+                          ),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () {},
+                          label: Text(
+                            AppLocale.share_label.getString(
+                              context,
+                            ),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          icon: const Icon(
+                            fluent.FluentIcons.share,
+                            size: 15,
+                          ),
+                          style: const ButtonStyle(
+                            elevation: WidgetStatePropertyAll(
+                              1,
+                            ),
+                            visualDensity: VisualDensity.compact,
+                            // shape: WidgetStatePropertyAll(
+                            //   RoundedRectangleBorder(
+                            //     borderRadius: BorderRadius.circular(
+                            //       5,
+                            //     ),
+                            //   ),
+                            // ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
