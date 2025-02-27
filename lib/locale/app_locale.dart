@@ -46,8 +46,18 @@ mixin AppLocale {
   static const String like_label = "Like";
   static const String comment_label = "Comment";
   static const String share_label = "Share";
+  static const String love_label = "Love";
+  static const String wow_label = "Wow";
+  static const String haha_label = "Haha";
+  static const String sad_label = "Sad";
+  static const String angry_label = "Angry";
 
   static const Map<String, dynamic> EN = {
+    love_label: "Love",
+    wow_label: "Wow",
+    haha_label: "Haha",
+    sad_label: "Sad",
+    angry_label: "Angry",
     like_label: "Like",
     comment_label: "Comment",
     share_label: "Share",
@@ -98,6 +108,11 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    love_label: "احببته",
+    wow_label: "ادهشني",
+    haha_label: "اضحكني",
+    sad_label: "احزنني",
+    angry_label: "اغضبني",
     like_label: "اعجبني",
     comment_label: "تعليق",
     share_label: "مشاركة",
