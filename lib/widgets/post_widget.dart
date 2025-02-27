@@ -4,9 +4,13 @@ import 'package:flick_video_player/flick_video_player.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/providers/app_settings_provider.dart';
+import 'package:merhaba_app/providers/timeline_provider.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
+import 'package:merhaba_app/utils/globals.dart';
+import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
 class PostWidget extends StatefulWidget {
@@ -25,8 +29,14 @@ class _PostWidgetState extends State<PostWidget> {
   CarouselSliderController _controller = CarouselSliderController();
   int currentIndex = 0;
 
+  String selectedReaction = "like";
+
   @override
   Widget build(BuildContext context) {
+    final timeLineProvider = Provider.of<TimelineProvider>(
+      context,
+    );
+
     return Card(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -244,31 +254,90 @@ class _PostWidgetState extends State<PostWidget> {
                         ElevatedButton.icon(
                           onPressed: () {},
                           label: Text(
-                            AppLocale.like_label.getString(
-                              context,
-                            ),
+                            timeLineProvider
+                                .getAvailableReactions(context)
+                                .where((reaction) =>
+                                    reaction["value"] == selectedReaction)
+                                .first["text"],
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                          icon: const Icon(
-                            fluent.FluentIcons.like,
-                            size: 15,
+                          icon: ReactionButton<String>(
+                            boxColor: Globals.theme == "Light"
+                                ? Colors.white
+                                : Colors.black,
+                            itemSize: const Size(
+                              20,
+                              20,
+                            ),
+                            onReactionChanged: (Reaction<String>? reaction) {
+                              // debugPrint('Selected value: ${reaction?.value}');
+                              if (reaction == null) {
+                                return;
+                              }
+
+                              if (reaction.value == null) {
+                                return;
+                              }
+
+                              setState(() {
+                                selectedReaction = reaction!.value!;
+                              });
+                            },
+                            reactions: <Reaction<String>>[
+                              ...timeLineProvider
+                                  .getAvailableReactions(
+                                    context,
+                                  )
+                                  .map(
+                                    (reaction) => Reaction<String>(
+                                      value: reaction["value"],
+                                      icon: reaction["icon"],
+                                      title: Text(
+                                        reaction["text"],
+                                      ),
+                                    ),
+                                  ),
+                            ],
+                            selectedReaction: Reaction(
+                              value: timeLineProvider
+                                  .getAvailableReactions(context)
+                                  .where((reaction) =>
+                                      reaction["value"] == selectedReaction)
+                                  .first["value"],
+                              icon: timeLineProvider
+                                  .getAvailableReactions(context)
+                                  .where((reaction) =>
+                                      reaction["value"] == selectedReaction)
+                                  .first["icon"],
+                              title: Text(
+                                timeLineProvider
+                                    .getAvailableReactions(context)
+                                    .where((reaction) =>
+                                        reaction["value"] == selectedReaction)
+                                    .first["text"],
+                              ),
+                            ),
+                            // selectedReaction: Reaction<String>(
+                            //   value: 'like',
+                            //   icon: const Icon(
+                            //     fluent.FluentIcons.like,
+                            //   ),
+                            //   title: Text(
+                            //     AppLocale.like_label.getString(
+                            //       context,
+                            //     ),
+                            //   ),
+                            // ),
                           ),
                           style: const ButtonStyle(
                             elevation: WidgetStatePropertyAll(
                               1,
                             ),
                             visualDensity: VisualDensity.compact,
-                            // shape: WidgetStatePropertyAll(
-                            //   RoundedRectangleBorder(
-                            //     borderRadius: BorderRadius.circular(
-                            //       5,
-                            //     ),
-                            //   ),
-                            // ),
                           ),
                         ),
                         ElevatedButton.icon(
@@ -292,13 +361,6 @@ class _PostWidgetState extends State<PostWidget> {
                               1,
                             ),
                             visualDensity: VisualDensity.compact,
-                            // shape: WidgetStatePropertyAll(
-                            //   RoundedRectangleBorder(
-                            //     borderRadius: BorderRadius.circular(
-                            //       5,
-                            //     ),
-                            //   ),
-                            // ),
                           ),
                         ),
                         ElevatedButton.icon(
@@ -322,13 +384,6 @@ class _PostWidgetState extends State<PostWidget> {
                               1,
                             ),
                             visualDensity: VisualDensity.compact,
-                            // shape: WidgetStatePropertyAll(
-                            //   RoundedRectangleBorder(
-                            //     borderRadius: BorderRadius.circular(
-                            //       5,
-                            //     ),
-                            //   ),
-                            // ),
                           ),
                         ),
                       ],
