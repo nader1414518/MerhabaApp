@@ -6,12 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
+import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/app_settings_provider.dart';
 import 'package:merhaba_app/providers/timeline_provider.dart';
+import 'package:merhaba_app/screens/common/photo_viewer_screen.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
 import 'package:merhaba_app/utils/globals.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class PostWidget extends StatefulWidget {
   Map<String, dynamic> post = {};
@@ -71,8 +74,8 @@ class _PostWidgetState extends State<PostWidget> {
                             children: [
                               widget.post["user_photo"] == ""
                                   ? Container(
-                                      height: 25,
-                                      width: 25,
+                                      height: 30,
+                                      width: 30,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(
                                           60,
@@ -88,8 +91,8 @@ class _PostWidgetState extends State<PostWidget> {
                                       imageUrl: widget.post["user_photo"],
                                       imageBuilder: (context, imageProvider) =>
                                           Container(
-                                        height: 25,
-                                        width: 25,
+                                        height: 30,
+                                        width: 30,
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(
                                             60,
@@ -106,21 +109,55 @@ class _PostWidgetState extends State<PostWidget> {
                                           const Icon(Icons.error),
                                     ),
                               const SizedBox(
-                                width: 15,
+                                width: 10,
                               ),
-                              SizedBox(
-                                width: (MediaQuery.sizeOf(context).width - 65) *
-                                    0.4,
-                                child: Text(
-                                  widget.post["username"].toString(),
-                                  // textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    width: (MediaQuery.sizeOf(context).width -
+                                            65) *
+                                        0.4,
+                                    child: Text(
+                                      widget.post["username"].toString(),
+                                      // textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        // color: Colors.grey,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                                  SizedBox(
+                                    width: (MediaQuery.sizeOf(context).width -
+                                            65) *
+                                        0.4,
+                                    child: Text(
+                                      timeago.format(
+                                        DateTime.parse(widget.post["date_added"]
+                                            .toString()),
+                                        locale: localization.currentLocale
+                                                    .localeIdentifier ==
+                                                'ar'
+                                            ? "ar"
+                                            : localization.currentLocale
+                                                        .localeIdentifier ==
+                                                    'en'
+                                                ? 'en_short'
+                                                : localization.currentLocale
+                                                    .localeIdentifier,
+                                      ),
+                                      // textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        // color: Colors.grey,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -170,11 +207,23 @@ class _PostWidgetState extends State<PostWidget> {
                                               imageUrl: item["url"].toString(),
                                               imageBuilder:
                                                   (context, imageProvider) =>
-                                                      Container(
-                                                decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                    image: imageProvider,
-                                                    fit: BoxFit.cover,
+                                                      InkWell(
+                                                onTap: () {
+                                                  Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                          builder: (context) {
+                                                    return PhotoViewerScreen(
+                                                      url: item["url"]
+                                                          .toString(),
+                                                    );
+                                                  }));
+                                                },
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                      image: imageProvider,
+                                                      fit: BoxFit.cover,
+                                                    ),
                                                   ),
                                                 ),
                                               ),

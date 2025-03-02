@@ -25,6 +25,7 @@ import 'package:merhaba_app/screens/tabs/profile/app_settings_screen.dart';
 import 'package:merhaba_app/utils/globals.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 final FlutterLocalization localization = FlutterLocalization.instance;
 final FlutterSecureStorage secureStorage = FlutterSecureStorage(
@@ -77,6 +78,13 @@ void main() async {
         Globals.theme = "Dark";
       }
     }
+  } catch (e) {
+    print(e.toString());
+  }
+
+  try {
+    timeago.setLocaleMessages(
+        'ar', timeago.ArMessages()); // Add french messages
   } catch (e) {
     print(e.toString());
   }
