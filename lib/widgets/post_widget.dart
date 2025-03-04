@@ -241,11 +241,17 @@ class _PostWidgetState extends State<PostWidget> {
                                           : Container(
                                               child: FlickVideoPlayer(
                                                 flickManager: FlickManager(
+                                                  autoPlay: false,
                                                   videoPlayerController:
                                                       VideoPlayerController
                                                           .networkUrl(
                                                     Uri.parse(
                                                       item["url"].toString(),
+                                                    ),
+                                                    videoPlayerOptions:
+                                                        VideoPlayerOptions(
+                                                      allowBackgroundPlayback:
+                                                          false,
                                                     ),
                                                   ),
                                                 ),
