@@ -26,6 +26,7 @@ import 'package:merhaba_app/utils/globals.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:fluent_ui/fluent_ui.dart' as fluent;
 
 final FlutterLocalization localization = FlutterLocalization.instance;
 final FlutterSecureStorage secureStorage = FlutterSecureStorage(
@@ -129,6 +130,33 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
+  fluent.Typography typography = const fluent.Typography.raw(
+    body: TextStyle(
+      fontFamily: "KingsguardCalligraphy",
+    ),
+    bodyLarge: TextStyle(
+      fontFamily: "KingsguardCalligraphy",
+    ),
+    bodyStrong: TextStyle(
+      fontFamily: "KingsguardCalligraphy",
+    ),
+    caption: TextStyle(
+      fontFamily: "KingsguardCalligraphy",
+    ),
+    display: TextStyle(
+      fontFamily: "KingsguardCalligraphy",
+    ),
+    subtitle: TextStyle(
+      fontFamily: "KingsguardCalligraphy",
+    ),
+    title: TextStyle(
+      fontFamily: "KingsguardCalligraphy",
+    ),
+    titleLarge: TextStyle(
+      fontFamily: "KingsguardCalligraphy",
+    ),
+  );
+
   @override
   void initState() {
     localization.init(
@@ -180,11 +208,19 @@ class MyAppState extends State<MyApp> {
         title: 'Merhaba App',
         debugShowCheckedModeBanner: false,
         theme: theme == ThemeData.light(useMaterial3: true)
-            ? FluentThemeData.light()
-            : FluentThemeData.dark(),
+            ? FluentThemeData.light().copyWith(
+                typography: typography,
+              )
+            : FluentThemeData.dark().copyWith(
+                typography: typography,
+              ),
         darkTheme: darkTheme == ThemeData.dark(useMaterial3: true)
-            ? FluentThemeData.dark()
-            : FluentThemeData.light(),
+            ? FluentThemeData.dark().copyWith(
+                typography: typography,
+              )
+            : FluentThemeData.light().copyWith(
+                typography: typography,
+              ),
         // theme: FluentThemeData.dark(),
         // home: WelcomeScreen(),
         supportedLocales: localization.supportedLocales,

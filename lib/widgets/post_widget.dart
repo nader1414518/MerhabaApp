@@ -12,6 +12,7 @@ import 'package:merhaba_app/providers/timeline_provider.dart';
 import 'package:merhaba_app/screens/common/photo_viewer_screen.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
 import 'package:merhaba_app/utils/globals.dart';
+import 'package:merhaba_app/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -118,8 +119,8 @@ class _PostWidgetState extends State<PostWidget> {
                                     width: (MediaQuery.sizeOf(context).width -
                                             65) *
                                         0.4,
-                                    child: Text(
-                                      widget.post["username"].toString(),
+                                    child: TextWidget(
+                                      text: widget.post["username"].toString(),
                                       // textAlign: TextAlign.center,
                                       style: const TextStyle(
                                         fontSize: 16,
@@ -178,8 +179,9 @@ class _PostWidgetState extends State<PostWidget> {
                       children: [
                         SizedBox(
                           width: (MediaQuery.sizeOf(context).width - 20) * 0.9,
-                          child: Text(
-                            widget.post["parsedContent"]["text"].toString(),
+                          child: TextWidget(
+                            text:
+                                widget.post["parsedContent"]["text"].toString(),
                             style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
