@@ -209,18 +209,18 @@ class MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         theme: theme == ThemeData.light(useMaterial3: true)
             ? FluentThemeData.light().copyWith(
-                typography: typography,
-              )
+                // typography: typography,
+                )
             : FluentThemeData.dark().copyWith(
-                typography: typography,
-              ),
+                // typography: typography,
+                ),
         darkTheme: darkTheme == ThemeData.dark(useMaterial3: true)
             ? FluentThemeData.dark().copyWith(
-                typography: typography,
-              )
+                // typography: typography,
+                )
             : FluentThemeData.light().copyWith(
-                typography: typography,
-              ),
+                // typography: typography,
+                ),
         // theme: FluentThemeData.dark(),
         // home: WelcomeScreen(),
         supportedLocales: localization.supportedLocales,

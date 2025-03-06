@@ -5,6 +5,7 @@ import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
+import 'package:merhaba_app/controllers/post_interactions_controller.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/app_settings_provider.dart';
@@ -33,7 +34,59 @@ class _PostWidgetState extends State<PostWidget> {
   CarouselSliderController _controller = CarouselSliderController();
   int currentIndex = 0;
 
+  bool isReacted = false;
   String selectedReaction = "like";
+  List<Map<String, dynamic>> reactions = [];
+
+  Map<String, dynamic> myReaction = {};
+
+  Future<void> getPostInteractions() async {
+    try {
+      var res = await PostInteractionsController.getPostInteractions(
+        widget.post["id"],
+      );
+
+      if (res["result"] == true) {
+        setState(() {
+          reactions = (res["data"] as List)
+              .map(
+                (d) => Map<String, dynamic>.from(
+                  d as Map,
+                ),
+              )
+              .toList();
+
+          if (reactions
+              .where((element) => element["isMine"] == true)
+              .isNotEmpty) {
+            myReaction = reactions.firstWhere(
+              (element) => element["isMine"] == true,
+            );
+            print("React Type >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " +
+                myReaction["react_type"]);
+            selectedReaction = myReaction["react_type"].toString();
+
+            isReacted = true;
+          }
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> getData() async {
+    // TODO: get post interactions
+    await getPostInteractions();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    getData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -308,21 +361,20 @@ class _PostWidgetState extends State<PostWidget> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ElevatedButton.icon(
-                          onPressed: () {},
-                          label: Text(
-                            timeLineProvider
-                                .getAvailableReactions(context)
-                                .where((reaction) =>
-                                    reaction["value"] == selectedReaction)
-                                .first["text"],
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 5,
+                            horizontal: 15,
                           ),
-                          icon: ReactionButton<String>(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(
+                              15,
+                            ),
+                            color: isReacted
+                                ? Colors.blueGrey.withOpacity(0.5)
+                                : Colors.transparent,
+                          ),
+                          child: ReactionButton<String>(
                             boxColor: Globals.theme == "Light"
                                 ? Colors.white
                                 : Colors.black,
@@ -330,8 +382,9 @@ class _PostWidgetState extends State<PostWidget> {
                               20,
                               20,
                             ),
-                            onReactionChanged: (Reaction<String>? reaction) {
-                              // debugPrint('Selected value: ${reaction?.value}');
+                            onReactionChanged:
+                                (Reaction<String>? reaction) async {
+                              debugPrint('Selected value: ${reaction?.value}');
                               if (reaction == null) {
                                 return;
                               }
@@ -340,9 +393,29 @@ class _PostWidgetState extends State<PostWidget> {
                                 return;
                               }
 
-                              setState(() {
-                                selectedReaction = reaction!.value!;
-                              });
+                              if (isReacted == false) {
+                                setState(() {
+                                  selectedReaction = reaction.value!;
+                                  isReacted = true;
+                                });
+
+                                await PostInteractionsController
+                                    .addReactionToPost(
+                                  widget.post["id"],
+                                  reaction.value!,
+                                );
+                              } else {
+                                setState(() {
+                                  selectedReaction = reaction.value!;
+                                  isReacted = true;
+                                });
+
+                                await PostInteractionsController
+                                    .updateReactionToPost(
+                                  myReaction["id"],
+                                  reaction.value!,
+                                );
+                              }
                             },
                             reactions: <Reaction<String>>[
                               ...timeLineProvider
@@ -353,48 +426,65 @@ class _PostWidgetState extends State<PostWidget> {
                                     (reaction) => Reaction<String>(
                                       value: reaction["value"],
                                       icon: reaction["icon"],
+                                      previewIcon: reaction["icon"],
                                       title: Text(
                                         reaction["text"],
                                       ),
                                     ),
                                   ),
                             ],
-                            selectedReaction: Reaction(
+                            placeholder: Reaction<String>(
                               value: timeLineProvider
                                   .getAvailableReactions(context)
-                                  .where((reaction) =>
-                                      reaction["value"] == selectedReaction)
                                   .first["value"],
                               icon: timeLineProvider
                                   .getAvailableReactions(context)
-                                  .where((reaction) =>
-                                      reaction["value"] == selectedReaction)
                                   .first["icon"],
                               title: Text(
                                 timeLineProvider
                                     .getAvailableReactions(context)
-                                    .where((reaction) =>
-                                        reaction["value"] == selectedReaction)
                                     .first["text"],
                               ),
                             ),
-                            // selectedReaction: Reaction<String>(
-                            //   value: 'like',
-                            //   icon: const Icon(
-                            //     fluent.FluentIcons.like,
-                            //   ),
-                            //   title: Text(
-                            //     AppLocale.like_label.getString(
-                            //       context,
-                            //     ),
-                            //   ),
-                            // ),
-                          ),
-                          style: const ButtonStyle(
-                            elevation: WidgetStatePropertyAll(
-                              1,
+                            isChecked: isReacted,
+                            child: InkWell(
+                              onTap: () async {
+                                try {
+                                  await PostInteractionsController
+                                      .removeReactionToPost(
+                                    widget.post["id"],
+                                  );
+
+                                  setState(() {
+                                    isReacted = false;
+                                    myReaction = {};
+                                    selectedReaction = "like";
+                                  });
+                                } catch (e) {
+                                  print(e.toString());
+                                }
+                              },
+                              child: Row(
+                                children: [
+                                  timeLineProvider
+                                      .getAvailableReactions(context)
+                                      .where((reaction) =>
+                                          reaction["value"] == selectedReaction)
+                                      .first["icon"],
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  Text(
+                                    timeLineProvider
+                                        .getAvailableReactions(context)
+                                        .where((reaction) =>
+                                            reaction["value"] ==
+                                            selectedReaction)
+                                        .first["text"],
+                                  ),
+                                ],
+                              ),
                             ),
-                            visualDensity: VisualDensity.compact,
                           ),
                         ),
                         ElevatedButton.icon(
