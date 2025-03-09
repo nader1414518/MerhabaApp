@@ -51,8 +51,10 @@ mixin AppLocale {
   static const String haha_label = "Haha";
   static const String sad_label = "Sad";
   static const String angry_label = "Angry";
+  static const String post_label = "Post";
 
   static const Map<String, dynamic> EN = {
+    post_label: "Post",
     love_label: "Love",
     wow_label: "Wow",
     haha_label: "Haha",
@@ -108,6 +110,7 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    post_label: "المنشور",
     love_label: "احببته",
     wow_label: "ادهشني",
     haha_label: "اضحكني",
