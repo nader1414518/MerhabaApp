@@ -541,6 +541,15 @@ class _PostWidgetState extends State<PostWidget> {
                                   ).pushNamed(
                                     "/view_post",
                                   );
+                                } else {
+                                  final postProvider =
+                                      Provider.of<PostProvider>(
+                                    context,
+                                    listen: false,
+                                  );
+
+                                  postProvider.newCommentFocusNode
+                                      .requestFocus();
                                 }
                               },
                               label: Text(
