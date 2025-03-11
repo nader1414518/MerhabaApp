@@ -27,13 +27,7 @@ class PostScreen extends StatelessWidget {
             ),
           ),
         ),
-        body: ListView(
-          padding: const EdgeInsets.symmetric(
-            vertical: 10,
-            horizontal: 0,
-          ),
-          shrinkWrap: true,
-          physics: const ClampingScrollPhysics(),
+        body: Stack(
           children: [
             PostWidget(
               post: postProvider.currentPost,
@@ -43,8 +37,58 @@ class PostScreen extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-
             // TODO: comments here
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: (MediaQuery.sizeOf(context).width),
+                height: 60,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(
+                      15,
+                    ),
+                    topRight: Radius.circular(
+                      15,
+                    ),
+                  ),
+                  color: Colors.blueGrey.withOpacity(
+                    0.25,
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 10,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.add,
+                      ),
+                      onPressed: () {},
+                    ),
+                    Expanded(
+                      child: fluent.TextBox(
+                        placeholder: AppLocale.comment_label.getString(
+                          context,
+                        ),
+                        expands: false,
+                        controller: postProvider.newCommentController,
+                        focusNode: postProvider.newCommentFocusNode,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.photo_camera_outlined,
+                      ),
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
