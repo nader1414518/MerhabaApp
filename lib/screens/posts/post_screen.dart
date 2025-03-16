@@ -4,6 +4,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/post_provider.dart';
+import 'package:merhaba_app/widgets/comment_widget.dart';
 import 'package:merhaba_app/widgets/post_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -29,15 +30,30 @@ class PostScreen extends StatelessWidget {
         ),
         body: Stack(
           children: [
-            PostWidget(
-              post: postProvider.currentPost,
-              showActions: true,
-              canNavigate: false,
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PostWidget(
+                  post: postProvider.currentPost,
+                  showActions: true,
+                  canNavigate: false,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                ...postProvider.comments.map(
+                  (comment) => Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 2,
+                      horizontal: 5,
+                    ),
+                    child: CommentWidget(
+                      comment: comment,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            // TODO: comments here
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
@@ -63,11 +79,23 @@ class PostScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    IconButton(
-                      icon: const Icon(
+                    InkWell(
+                      child: const Icon(
                         Icons.add,
                       ),
-                      onPressed: () {},
+                      onTap: () {},
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    InkWell(
+                      child: const Icon(
+                        Icons.photo_camera_outlined,
+                      ),
+                      onTap: () {},
+                    ),
+                    const SizedBox(
+                      width: 10,
                     ),
                     Expanded(
                       child: fluent.TextBox(
@@ -77,14 +105,25 @@ class PostScreen extends StatelessWidget {
                         expands: false,
                         controller: postProvider.newCommentController,
                         focusNode: postProvider.newCommentFocusNode,
+                        onChanged: (value) {
+                          postProvider.setIsNewCommentEmpty(value.isEmpty);
+                        },
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.photo_camera_outlined,
-                      ),
-                      onPressed: () {},
+                    const SizedBox(
+                      width: 10,
                     ),
+                    if (!(postProvider.isNewCommentEmpty))
+                      InkWell(
+                        child: const Icon(
+                          Icons.send,
+                        ),
+                        onTap: () async {
+                          postProvider.onAdd(
+                            context,
+                          );
+                        },
+                      ),
                   ],
                 ),
               ),
