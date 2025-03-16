@@ -52,8 +52,10 @@ mixin AppLocale {
   static const String sad_label = "Sad";
   static const String angry_label = "Angry";
   static const String post_label = "Post";
+  static const String posted_successfully_label = "Post Successfully ... ";
 
   static const Map<String, dynamic> EN = {
+    posted_successfully_label: "Posted Successfully ... ",
     post_label: "Post",
     love_label: "Love",
     wow_label: "Wow",
@@ -110,6 +112,7 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    posted_successfully_label: "تم النشر بنجاح ... ",
     post_label: "المنشور",
     love_label: "احببته",
     wow_label: "ادهشني",
