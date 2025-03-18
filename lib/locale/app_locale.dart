@@ -53,8 +53,12 @@ mixin AppLocale {
   static const String angry_label = "Angry";
   static const String post_label = "Post";
   static const String posted_successfully_label = "Post Successfully ... ";
+  static const String choose_media_label = "Choose Media";
+  static const String choose_source_label = "Choose Source";
 
   static const Map<String, dynamic> EN = {
+    choose_media_label: "Choose Media",
+    choose_source_label: "Choose Source",
     posted_successfully_label: "Posted Successfully ... ",
     post_label: "Post",
     love_label: "Love",
@@ -112,6 +116,8 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    choose_media_label: "اختار نوع الوسائط",
+    choose_source_label: "اختار المصدر",
     posted_successfully_label: "تم النشر بنجاح ... ",
     post_label: "المنشور",
     love_label: "احببته",

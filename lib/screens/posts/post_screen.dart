@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:merhaba_app/controllers/comments_controller.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/post_provider.dart';
@@ -30,8 +35,10 @@ class PostScreen extends StatelessWidget {
         ),
         body: Stack(
           children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
+            ListView(
+              // mainAxisSize: MainAxisSize.min,
+              shrinkWrap: true,
+              physics: const ClampingScrollPhysics(),
               children: [
                 PostWidget(
                   post: postProvider.currentPost,
@@ -47,10 +54,16 @@ class PostScreen extends StatelessWidget {
                       vertical: 2,
                       horizontal: 5,
                     ),
-                    child: CommentWidget(
-                      comment: comment,
+                    child: SizedBox(
+                      width: (MediaQuery.sizeOf(context).width - 60) * 0.6,
+                      child: CommentWidget(
+                        comment: comment,
+                      ),
                     ),
                   ),
+                ),
+                const SizedBox(
+                  height: 100,
                 ),
               ],
             ),
@@ -79,20 +92,487 @@ class PostScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    InkWell(
-                      child: const Icon(
-                        Icons.add,
-                      ),
-                      onTap: () {},
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
+                    // InkWell(
+                    //   child: const Icon(
+                    //     Icons.add,
+                    //   ),
+                    //   onTap: () {},
+                    // ),
+                    // const SizedBox(
+                    //   width: 10,
+                    // ),
                     InkWell(
                       child: const Icon(
                         Icons.photo_camera_outlined,
                       ),
-                      onTap: () {},
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (_1) => fluent.ContentDialog(
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  AppLocale.choose_media_label.getString(
+                                    context,
+                                  ),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            content: Directionality(
+                              textDirection:
+                                  localization.currentLocale.localeIdentifier ==
+                                          "ar"
+                                      ? TextDirection.rtl
+                                      : TextDirection.ltr,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Material(
+                                    child: ListTile(
+                                      title: Text(
+                                        AppLocale.photo_label.getString(
+                                          context,
+                                        ),
+                                      ),
+                                      dense: true,
+                                      visualDensity: VisualDensity.compact,
+                                      onTap: () {
+                                        showDialog(
+                                          context: _1,
+                                          builder: (_2) => fluent.ContentDialog(
+                                            title: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  AppLocale.choose_source_label
+                                                      .getString(
+                                                    context,
+                                                  ),
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            content: Directionality(
+                                              textDirection: localization
+                                                          .currentLocale
+                                                          .localeIdentifier ==
+                                                      "ar"
+                                                  ? TextDirection.rtl
+                                                  : TextDirection.ltr,
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Material(
+                                                    child: ListTile(
+                                                      title: Text(
+                                                        AppLocale.camera_label
+                                                            .getString(
+                                                          context,
+                                                        ),
+                                                      ),
+                                                      dense: true,
+                                                      visualDensity:
+                                                          VisualDensity.compact,
+                                                      onTap: () async {
+                                                        postProvider
+                                                            .setIsLoading(true);
+
+                                                        try {
+                                                          ImagePicker
+                                                              imagePicker =
+                                                              ImagePicker();
+
+                                                          var file =
+                                                              await imagePicker
+                                                                  .pickImage(
+                                                            source: ImageSource
+                                                                .camera,
+                                                            imageQuality: 50,
+                                                          );
+
+                                                          if (file != null) {
+                                                            var res =
+                                                                await CommentsController
+                                                                    .uploadCommentImage(
+                                                              File(
+                                                                file.path,
+                                                              ),
+                                                            );
+
+                                                            if (res["result"] ==
+                                                                true) {
+                                                              postProvider
+                                                                  .setAddMediaUrl(
+                                                                res["url"]
+                                                                    .toString(),
+                                                              );
+
+                                                              await postProvider
+                                                                  .onAddPhoto(
+                                                                _1,
+                                                              );
+
+                                                              Navigator.of(_2)
+                                                                  .pop();
+                                                              Navigator.of(_1)
+                                                                  .pop();
+                                                            } else {
+                                                              Fluttertoast
+                                                                  .showToast(
+                                                                msg: res[
+                                                                        "message"]
+                                                                    .toString(),
+                                                              );
+                                                            }
+                                                          }
+                                                        } catch (e) {
+                                                          print(e.toString());
+                                                        }
+
+                                                        postProvider
+                                                            .setIsLoading(
+                                                                false);
+                                                      },
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          15,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Material(
+                                                    child: ListTile(
+                                                      title: Text(
+                                                        AppLocale.gallery_label
+                                                            .getString(
+                                                          context,
+                                                        ),
+                                                      ),
+                                                      dense: true,
+                                                      visualDensity:
+                                                          VisualDensity.compact,
+                                                      onTap: () async {
+                                                        postProvider
+                                                            .setIsLoading(true);
+
+                                                        try {
+                                                          ImagePicker
+                                                              imagePicker =
+                                                              ImagePicker();
+
+                                                          var file =
+                                                              await imagePicker
+                                                                  .pickImage(
+                                                            source: ImageSource
+                                                                .gallery,
+                                                            imageQuality: 50,
+                                                          );
+
+                                                          if (file != null) {
+                                                            var res =
+                                                                await CommentsController
+                                                                    .uploadCommentImage(
+                                                              File(
+                                                                file.path,
+                                                              ),
+                                                            );
+
+                                                            if (res["result"] ==
+                                                                true) {
+                                                              postProvider
+                                                                  .setAddMediaUrl(
+                                                                res["url"]
+                                                                    .toString(),
+                                                              );
+
+                                                              await postProvider
+                                                                  .onAddPhoto(
+                                                                _1,
+                                                              );
+
+                                                              Navigator.of(_2)
+                                                                  .pop();
+                                                              Navigator.of(_1)
+                                                                  .pop();
+                                                            } else {
+                                                              Fluttertoast
+                                                                  .showToast(
+                                                                msg: res[
+                                                                        "message"]
+                                                                    .toString(),
+                                                              );
+                                                            }
+                                                          }
+                                                        } catch (e) {
+                                                          print(e.toString());
+                                                        }
+
+                                                        postProvider
+                                                            .setIsLoading(
+                                                                false);
+                                                      },
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          15,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          15,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Material(
+                                    child: ListTile(
+                                      title: Text(
+                                        AppLocale.video_label.getString(
+                                          context,
+                                        ),
+                                      ),
+                                      dense: true,
+                                      visualDensity: VisualDensity.compact,
+                                      onTap: () {
+                                        showDialog(
+                                          context: _1,
+                                          builder: (_2) => fluent.ContentDialog(
+                                            title: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  AppLocale.choose_source_label
+                                                      .getString(
+                                                    context,
+                                                  ),
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            content: Directionality(
+                                              textDirection: localization
+                                                          .currentLocale
+                                                          .localeIdentifier ==
+                                                      "ar"
+                                                  ? TextDirection.rtl
+                                                  : TextDirection.ltr,
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Material(
+                                                    child: ListTile(
+                                                      title: Text(
+                                                        AppLocale.camera_label
+                                                            .getString(
+                                                          context,
+                                                        ),
+                                                      ),
+                                                      dense: true,
+                                                      visualDensity:
+                                                          VisualDensity.compact,
+                                                      onTap: () async {
+                                                        postProvider
+                                                            .setIsLoading(true);
+
+                                                        try {
+                                                          ImagePicker
+                                                              imagePicker =
+                                                              ImagePicker();
+
+                                                          var file =
+                                                              await imagePicker
+                                                                  .pickVideo(
+                                                            source: ImageSource
+                                                                .camera,
+                                                          );
+
+                                                          if (file != null) {
+                                                            var res =
+                                                                await CommentsController
+                                                                    .uploadCommentVideo(
+                                                              File(
+                                                                file.path,
+                                                              ),
+                                                            );
+
+                                                            if (res["result"] ==
+                                                                true) {
+                                                              postProvider
+                                                                  .setAddMediaUrl(
+                                                                res["url"]
+                                                                    .toString(),
+                                                              );
+
+                                                              await postProvider
+                                                                  .onAddVideo(
+                                                                _1,
+                                                              );
+
+                                                              Navigator.of(_2)
+                                                                  .pop();
+                                                              Navigator.of(_1)
+                                                                  .pop();
+                                                            } else {
+                                                              Fluttertoast
+                                                                  .showToast(
+                                                                msg: res[
+                                                                        "message"]
+                                                                    .toString(),
+                                                              );
+                                                            }
+                                                          }
+                                                        } catch (e) {
+                                                          print(e.toString());
+                                                        }
+
+                                                        postProvider
+                                                            .setIsLoading(
+                                                                false);
+                                                      },
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          15,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Material(
+                                                    child: ListTile(
+                                                      title: Text(
+                                                        AppLocale.gallery_label
+                                                            .getString(
+                                                          context,
+                                                        ),
+                                                      ),
+                                                      dense: true,
+                                                      visualDensity:
+                                                          VisualDensity.compact,
+                                                      onTap: () async {
+                                                        postProvider
+                                                            .setIsLoading(true);
+
+                                                        try {
+                                                          ImagePicker
+                                                              imagePicker =
+                                                              ImagePicker();
+
+                                                          var file =
+                                                              await imagePicker
+                                                                  .pickVideo(
+                                                            source: ImageSource
+                                                                .gallery,
+                                                          );
+
+                                                          if (file != null) {
+                                                            var res =
+                                                                await CommentsController
+                                                                    .uploadCommentVideo(
+                                                              File(
+                                                                file.path,
+                                                              ),
+                                                            );
+
+                                                            if (res["result"] ==
+                                                                true) {
+                                                              postProvider
+                                                                  .setAddMediaUrl(
+                                                                res["url"]
+                                                                    .toString(),
+                                                              );
+
+                                                              await postProvider
+                                                                  .onAddVideo(
+                                                                _1,
+                                                              );
+
+                                                              Navigator.of(_2)
+                                                                  .pop();
+                                                              Navigator.of(_1)
+                                                                  .pop();
+                                                            } else {
+                                                              Fluttertoast
+                                                                  .showToast(
+                                                                msg: res[
+                                                                        "message"]
+                                                                    .toString(),
+                                                              );
+                                                            }
+                                                          }
+                                                        } catch (e) {
+                                                          print(e.toString());
+                                                        }
+
+                                                        postProvider
+                                                            .setIsLoading(
+                                                                false);
+                                                      },
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          15,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          15,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(
                       width: 10,
