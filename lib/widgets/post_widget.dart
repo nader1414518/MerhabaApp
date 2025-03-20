@@ -134,11 +134,11 @@ class _PostWidgetState extends State<PostWidget> {
                       0.25,
                     ),
                     borderRadius: BorderRadius.circular(
-                      10,
+                      5,
                     ),
                   ),
                   padding: const EdgeInsets.all(
-                    10,
+                    5,
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,

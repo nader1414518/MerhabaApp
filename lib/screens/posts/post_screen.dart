@@ -46,7 +46,7 @@ class PostScreen extends StatelessWidget {
                   canNavigate: false,
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 3,
                 ),
                 ...postProvider.comments.map(
                   (comment) => Padding(
@@ -82,7 +82,7 @@ class PostScreen extends StatelessWidget {
                     ),
                   ),
                   color: Colors.blueGrey.withOpacity(
-                    0.25,
+                    0.8,
                   ),
                 ),
                 padding: const EdgeInsets.symmetric(
