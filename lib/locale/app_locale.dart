@@ -55,8 +55,18 @@ mixin AppLocale {
   static const String posted_successfully_label = "Post Successfully ... ";
   static const String choose_media_label = "Choose Media";
   static const String choose_source_label = "Choose Source";
+  static const String reactions_label = "Reactions";
+  static const String comments_label = "Comments";
+  static const String shares_label = "Shares";
+  static const String chats_label = "Chats";
+  static const String type_message_label = "Type message";
 
   static const Map<String, dynamic> EN = {
+    chats_label: "Chats",
+    type_message_label: "Type message",
+    reactions_label: "Reactions",
+    comments_label: "Comments",
+    shares_label: "Shares",
     choose_media_label: "Choose Media",
     choose_source_label: "Choose Source",
     posted_successfully_label: "Posted Successfully ... ",
@@ -116,6 +126,11 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    chats_label: "المحادثات",
+    type_message_label: "اكتب رسالة",
+    reactions_label: "تفاعلات",
+    comments_label: "تعليقات",
+    shares_label: "مشاركات",
     choose_media_label: "اختار نوع الوسائط",
     choose_source_label: "اختار المصدر",
     posted_successfully_label: "تم النشر بنجاح ... ",

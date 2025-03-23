@@ -83,6 +83,25 @@ class CommentsController {
     }
   }
 
+  // Get Comments Count (For Post)
+  static Future<int> getCommentsCountForPost(
+    int postId,
+  ) async {
+    try {
+      var res = await Supabase.instance.client
+          .from("post_comments")
+          .select()
+          .eq("post_id", postId)
+          .eq("active", true)
+          .count();
+
+      return res.count;
+    } catch (e) {
+      print(e.toString());
+      return 0;
+    }
+  }
+
   // Reply to Comment
   static Future<Map<String, dynamic>> replyToComment(
     Map<String, dynamic> data,

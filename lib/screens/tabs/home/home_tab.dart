@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:merhaba_app/providers/chats_provider.dart';
 import 'package:merhaba_app/providers/profile_tab_provider.dart';
 import 'package:merhaba_app/providers/timeline_provider.dart';
 import 'package:merhaba_app/widgets/post_widget.dart';
@@ -25,26 +27,46 @@ class HomeTab extends StatelessWidget {
           : TextDirection.ltr,
       child: Scaffold(
         appBar: AppBar(
-            centerTitle: false,
-            title: const Text(
-              // AppLocale.home_label.getString(
-              //   context,
-              // ),
-              "MERHABA",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+          centerTitle: false,
+          title: const Text(
+            "MERHABA",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          )
+              .animate(
+                onPlay: (controller) => controller.repeat(),
+              )
+              .shimmer(duration: 3000.ms, color: const Color(0xFF80DDFF))
+              .animate(
+                  // onPlay: (controller) => controller.repeat(),
+                  ) // this wraps the previous Animate in another Animate
+              .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
+              .slide(),
+          actions: [
+            IconButton(
+              onPressed: () {
+                final chatsProvider = Provider.of<ChatsProvider>(
+                  context,
+                  listen: false,
+                );
+
+                chatsProvider.getData();
+
+                Navigator.of(
+                  context,
+                  rootNavigator: true,
+                ).pushNamed(
+                  "/chats",
+                );
+              },
+              icon: const Icon(
+                CupertinoIcons.bubble_left_bubble_right,
               ),
-            )
-                .animate(
-                  onPlay: (controller) => controller.repeat(),
-                )
-                .shimmer(duration: 3000.ms, color: const Color(0xFF80DDFF))
-                .animate(
-                    // onPlay: (controller) => controller.repeat(),
-                    ) // this wraps the previous Animate in another Animate
-                .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
-                .slide()),
+            ),
+          ],
+        ),
         body: SwipeRefresh.adaptive(
           stateStream: timeLineProvider.swipeStream,
           onRefresh: timeLineProvider.onRefresh,

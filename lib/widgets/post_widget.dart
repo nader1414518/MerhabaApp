@@ -5,6 +5,7 @@ import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
+import 'package:merhaba_app/controllers/comments_controller.dart';
 import 'package:merhaba_app/controllers/post_interactions_controller.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
@@ -45,6 +46,8 @@ class _PostWidgetState extends State<PostWidget> {
 
   Map<String, dynamic> myReaction = {};
 
+  int commentsCount = 0;
+
   Future<void> getPostInteractions() async {
     try {
       var res = await PostInteractionsController.getPostInteractions(
@@ -80,9 +83,24 @@ class _PostWidgetState extends State<PostWidget> {
     }
   }
 
+  Future<void> getCommentsCount() async {
+    try {
+      var res = await CommentsController.getCommentsCountForPost(
+        widget.post["id"],
+      );
+
+      setState(() {
+        commentsCount = res;
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   Future<void> getData() async {
-    // TODO: get post interactions
     await getPostInteractions();
+
+    await getCommentsCount();
   }
 
   @override
@@ -383,9 +401,52 @@ class _PostWidgetState extends State<PostWidget> {
                               ],
                             ),
                       const SizedBox(
-                        height: 5,
+                        height: 10,
                       ),
-                      if (widget.showActions) const Divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width:
+                                (MediaQuery.sizeOf(context).width - 60) * 0.33,
+                            child: Text(
+                              "${reactions.length} ${AppLocale.reactions_label.getString(
+                                context,
+                              )}",
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width:
+                                (MediaQuery.sizeOf(context).width - 60) * 0.33,
+                            child: Text(
+                              "$commentsCount ${AppLocale.comments_label.getString(
+                                context,
+                              )}",
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width:
+                                (MediaQuery.sizeOf(context).width - 60) * 0.33,
+                            child: Text(
+                              "0 ${AppLocale.shares_label.getString(
+                                context,
+                              )}",
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                       if (widget.showActions)
                         const SizedBox(
                           height: 5,
