@@ -9,6 +9,7 @@ import 'package:merhaba_app/firebase_options.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/providers/app_settings_provider.dart';
 import 'package:merhaba_app/providers/chats_provider.dart';
+import 'package:merhaba_app/providers/contact_search_provider.dart';
 import 'package:merhaba_app/providers/create_account_provider.dart';
 import 'package:merhaba_app/providers/home_screen_provider.dart';
 import 'package:merhaba_app/providers/location_viewer_provider.dart';
@@ -20,6 +21,7 @@ import 'package:merhaba_app/providers/timeline_provider.dart';
 import 'package:merhaba_app/screens/authentication/create_account_screen.dart';
 import 'package:merhaba_app/screens/authentication/login_screen.dart';
 import 'package:merhaba_app/screens/chats/chats_screen.dart';
+import 'package:merhaba_app/screens/chats/contact_search_screen.dart';
 import 'package:merhaba_app/screens/general/home_screen.dart';
 import 'package:merhaba_app/screens/general/welcome_screen.dart';
 import 'package:merhaba_app/screens/location/location_viewer.dart';
@@ -126,6 +128,9 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (_) => ChatsProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => ContactSearchProvider(),
       ),
     ],
     child: const MyApp(),
@@ -246,6 +251,7 @@ class MyAppState extends State<MyApp> {
           "/location_viewer": (context) => LocationViewerScreen(),
           "/view_post": (context) => PostScreen(),
           "/chats": (context) => const ChatsScreen(),
+          "/contact_search": (context) => const ContactSearchScreen(),
         },
       ),
     );
