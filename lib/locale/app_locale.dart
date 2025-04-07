@@ -60,8 +60,14 @@ mixin AppLocale {
   static const String shares_label = "Shares";
   static const String chats_label = "Chats";
   static const String type_message_label = "Type message";
+  static const String search_label = "Search";
+  static const String chat_label = "Chat";
+  static const String start_chat_label = "Start Chat";
 
   static const Map<String, dynamic> EN = {
+    search_label: "Search",
+    chat_label: "Chat",
+    start_chat_label: "Start Chat",
     chats_label: "Chats",
     type_message_label: "Type message",
     reactions_label: "Reactions",
@@ -126,6 +132,9 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    search_label: "بحث",
+    chat_label: "دردشة",
+    start_chat_label: "بدء المحادثة",
     chats_label: "المحادثات",
     type_message_label: "اكتب رسالة",
     reactions_label: "تفاعلات",

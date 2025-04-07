@@ -59,4 +59,30 @@ class SingleChatsController {
       };
     }
   }
+
+  static Future<List<Map<String, dynamic>>> searchContacts(String query) async {
+    try {
+      var emailMatched = await Supabase.instance.client
+          .from("users")
+          .select()
+          .eq("email", query.toLowerCase().trim());
+      var fullNameMatched = await Supabase.instance.client
+          .from("users")
+          .select()
+          .eq("full_name", query.toLowerCase().trim());
+      var phoneMatched = await Supabase.instance.client
+          .from("users")
+          .select()
+          .eq("phone", query.toLowerCase().trim());
+
+      return [
+        ...emailMatched,
+        ...fullNameMatched,
+        ...phoneMatched,
+      ];
+    } catch (e) {
+      print(e.toString());
+      return [];
+    }
+  }
 }

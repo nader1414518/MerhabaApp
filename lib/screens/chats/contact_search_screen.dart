@@ -1,18 +1,18 @@
-import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
-import 'package:merhaba_app/providers/chats_provider.dart';
+import 'package:fluent_ui/fluent_ui.dart' as fluent;
+import 'package:merhaba_app/providers/contact_search_provider.dart';
 import 'package:provider/provider.dart';
 
-class ChatsScreen extends StatelessWidget {
-  const ChatsScreen({super.key});
+class ContactSearchScreen extends StatelessWidget {
+  const ContactSearchScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final chatsProvider = Provider.of<ChatsProvider>(
+    final contactSearchProvider = Provider.of<ContactSearchProvider>(
       context,
     );
 
@@ -24,7 +24,7 @@ class ChatsScreen extends StatelessWidget {
         appBar: AppBar(
           centerTitle: false,
           title: Text(
-            AppLocale.chats_label.getString(
+            AppLocale.search_label.getString(
               context,
             ),
             style: const TextStyle(
@@ -42,7 +42,7 @@ class ChatsScreen extends StatelessWidget {
               .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
               .slide(),
         ),
-        body: chatsProvider.isLoading
+        body: contactSearchProvider.isLoading
             ? const Center(
                 child: fluent.ProgressBar(),
               )
@@ -55,16 +55,6 @@ class ChatsScreen extends StatelessWidget {
                 physics: const ClampingScrollPhysics(),
                 children: [],
               ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed(
-              "/contact_search",
-            );
-          },
-          child: const Icon(
-            Icons.add,
-          ),
-        ),
       ),
     );
   }

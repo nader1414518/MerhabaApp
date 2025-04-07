@@ -57,6 +57,13 @@ class AuthController {
         };
       }
 
+      await Supabase.instance.client.from("users").insert({
+        "user_id": res.user!.id,
+        "email": data["email"].toString().toLowerCase().trim(),
+        "full_name": data["fullName"].toString(),
+        "phone": data["phone"].toString(),
+      });
+
       return {
         "result": true,
         "message": "Created account successfully ... ",
