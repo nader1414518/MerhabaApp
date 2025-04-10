@@ -63,8 +63,10 @@ mixin AppLocale {
   static const String search_label = "Search";
   static const String chat_label = "Chat";
   static const String start_chat_label = "Start Chat";
+  static const String contact_label = "Contact";
 
   static const Map<String, dynamic> EN = {
+    contact_label: "Contact",
     search_label: "Search",
     chat_label: "Chat",
     start_chat_label: "Start Chat",
@@ -132,6 +134,7 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    contact_label: "جهة اتصال",
     search_label: "بحث",
     chat_label: "دردشة",
     start_chat_label: "بدء المحادثة",
