@@ -60,6 +60,75 @@ class SingleChatsController {
     }
   }
 
+  // data => {chatId, message}
+  static Future<Map<String, dynamic>> onSendMessage(
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      var uid = await secureStorage.read(
+        key: "uid",
+      );
+
+      if (uid == null) {
+        return {
+          "result": false,
+          "message": "Please login again!!",
+        };
+      }
+
+      await Supabase.instance.client.from("single_chat_messages").insert({
+        "chat_id": data["chatId"],
+        "user_id": uid,
+        "content": jsonEncode({
+          "text": data["message"].toString(),
+          "type": "text",
+        }),
+        "active": true,
+        "date_added": DateTime.now().toIso8601String(),
+        "added_by": uid,
+      });
+
+      return {
+        "result": true,
+        "message": "Sent successfully ... ",
+      };
+    } catch (e) {
+      print(e.toString());
+      return {
+        "result": false,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> getChatData(int chatId) async {
+    try {
+      var res = await Supabase.instance.client
+          .from("single_chats")
+          .select()
+          .eq("id", chatId);
+
+      if (res.isEmpty) {
+        return {
+          "result": false,
+          "message": "Chat not found!!",
+        };
+      }
+
+      return {
+        "result": true,
+        "message": "Retrieved successfully ... ",
+        "data": res.first,
+      };
+    } catch (e) {
+      print(e.toString());
+      return {
+        "result": false,
+        "message": e.toString(),
+      };
+    }
+  }
+
   static Future<List<Map<String, dynamic>>> searchContacts(String query) async {
     try {
       var emailMatched = await Supabase.instance.client

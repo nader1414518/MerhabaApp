@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:merhaba_app/controllers/single_chats_controller.dart';
 
 class ChatProvider with ChangeNotifier {
   bool _isLoading = false;
@@ -9,6 +10,22 @@ class ChatProvider with ChangeNotifier {
 
   List<Map<String, dynamic>> _messages = [];
   List<Map<String, dynamic>> get messages => _messages;
+
+  int _chatId = -1;
+  int get chatId => _chatId;
+
+  Map<String, dynamic> _chatData = {};
+  Map<String, dynamic> get chatData => _chatData;
+
+  setChatData(Map<String, dynamic> value) {
+    _chatData = value;
+    notifyListeners();
+  }
+
+  setChatId(int value) {
+    _chatId = value;
+    notifyListeners();
+  }
 
   setMessages(List<Map<String, dynamic>> value) {
     _messages = value;
@@ -40,9 +57,45 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> onSendMessage(
+    BuildContext context,
+    String text,
+  ) async {
+    try {
+      if (messages.isEmpty) {
+        var startRes = await SingleChatsController.startChat({
+          "user_id": otherUserId,
+          "message": text,
+        });
+
+        if (startRes["result"] == true) {
+          var id = num.parse(startRes["chatId"].toString()).toInt();
+
+          setChatId(id);
+
+          getChatData();
+        }
+      } else {
+        await SingleChatsController.onSendMessage({
+          "chatId": chatId,
+          "message": text,
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   Future<void> getChatData() async {
     try {
-      // Check if there is already a chat between the current user and the other user, and load the messages if found
+      var res = await SingleChatsController.getChatData(chatId);
+      if (res["result"] == true) {
+        setChatData(
+          Map<String, dynamic>.from(
+            res["data"] as Map,
+          ),
+        );
+      }
     } catch (e) {
       print(e.toString());
     }
