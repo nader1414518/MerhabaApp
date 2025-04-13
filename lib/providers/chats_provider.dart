@@ -4,6 +4,24 @@ class ChatsProvider with ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  List<Map<String, dynamic>> _chats = [];
+  List<Map<String, dynamic>> get chats => _chats;
+
+  setChats(List<Map<String, dynamic>> value) {
+    _chats = value;
+    notifyListeners();
+  }
+
+  addToChats(Map<String, dynamic> value) {
+    _chats.add(value);
+    notifyListeners();
+  }
+
+  clearChats(Map<String, dynamic> value) {
+    _chats.clear();
+    notifyListeners();
+  }
+
   setIsLoading(bool value) {
     _isLoading = value;
     notifyListeners();
