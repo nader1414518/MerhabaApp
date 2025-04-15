@@ -101,6 +101,36 @@ class SingleChatsController {
     }
   }
 
+  static Future<List<Map<String, dynamic>>> getMyChats() async {
+    try {
+      var uid = await secureStorage.read(
+        key: "uid",
+      );
+
+      if (uid == null) {
+        return [];
+      }
+
+      var user1Res = await Supabase.instance.client
+          .from("single_chats")
+          .select()
+          .eq("user1_id", uid);
+
+      var user2Res = await Supabase.instance.client
+          .from("single_chats")
+          .select()
+          .eq("user2_id", uid);
+
+      return [
+        ...user1Res,
+        ...user2Res,
+      ];
+    } catch (e) {
+      print(e.toString());
+      return [];
+    }
+  }
+
   static Future<Map<String, dynamic>> getChatData(int chatId) async {
     try {
       var res = await Supabase.instance.client
@@ -126,6 +156,80 @@ class SingleChatsController {
         "result": false,
         "message": e.toString(),
       };
+    }
+  }
+
+  static Future<Map<String, dynamic>> getChatUserInfo(int id) async {
+    try {
+      var uid = await secureStorage.read(
+        key: "uid",
+      );
+
+      if (uid == null) {
+        return {
+          "result": false,
+          "message": "Please login again!!",
+        };
+      }
+
+      var chatDataRes = await getChatData(id);
+      if (chatDataRes["result"] == false) {
+        return chatDataRes;
+      }
+
+      Map<String, dynamic> chatData = Map<String, dynamic>.from(
+        chatDataRes["data"] as Map,
+      );
+
+      String otherUserId = chatData["user1_id"].toString();
+      if (otherUserId == uid) {
+        otherUserId = chatData["user2_id"].toString();
+      }
+
+      var userDataRes = await Supabase.instance.client
+          .from("users")
+          .select()
+          .eq("user_id", otherUserId);
+
+      Map<String, dynamic> userData = {};
+      if (userDataRes.isNotEmpty) {
+        userData = userDataRes.first;
+      }
+
+      var messages = await getMessages(id);
+
+      // print(messages.last);
+
+      return {
+        "result": true,
+        "message": "Retrieved successfully",
+        "userData": userData,
+        "lastMessage": jsonDecode(
+          messages.last["content"].toString(),
+        )["text"]
+            .toString(),
+      };
+    } catch (e) {
+      print(e.toString());
+      return {
+        "result": false,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> getMessages(int chatId) async {
+    try {
+      var res = await Supabase.instance.client
+          .from("single_chat_messages")
+          .select()
+          .eq("chat_id", chatId)
+          .order("date_added", ascending: true);
+
+      return res;
+    } catch (e) {
+      print(e.toString());
+      return [];
     }
   }
 
