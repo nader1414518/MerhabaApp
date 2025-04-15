@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:merhaba_app/controllers/single_chats_controller.dart';
 
 class ChatsProvider with ChangeNotifier {
   bool _isLoading = false;
@@ -32,7 +33,15 @@ class ChatsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getChats() async {}
+  Future<void> getChats() async {
+    try {
+      var res = await SingleChatsController.getMyChats();
+
+      setChats(res);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 
   Future<void> getData() async {
     setIsLoading(true);
