@@ -65,8 +65,12 @@ mixin AppLocale {
   static const String start_chat_label = "Start Chat";
   static const String contact_label = "Contact";
   static const String loading_label = "Loading ... ";
+  static const String file_label = "File";
+  static const String attchment_label = "Attachment";
 
   static const Map<String, dynamic> EN = {
+    file_label: "File",
+    attchment_label: "Attachment",
     loading_label: "Loading ... ",
     contact_label: "Contact",
     search_label: "Search",
@@ -136,6 +140,8 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    file_label: "ملف",
+    attchment_label: "ملحق",
     loading_label: "جاري التحميل ...",
     contact_label: "جهة اتصال",
     search_label: "بحث",
