@@ -13,6 +13,7 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart' as chat_ui;
 import 'package:flutter_chat_types/flutter_chat_types.dart' as chat_types;
 import 'package:merhaba_app/providers/chat_provider.dart';
 import 'package:merhaba_app/utils/globals.dart';
+import 'package:merhaba_app/widgets/chat/video_message.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
@@ -98,6 +99,17 @@ class ChatScreen extends StatelessWidget {
                     name: "",
                     size: 300,
                     uri: parsedContent["image"].toString(),
+                  );
+                } else if (parsedContent["type"] == "video") {
+                  return chat_types.CustomMessage(
+                    author: chat_types.User(
+                      id: message["user_id"].toString(),
+                    ),
+                    id: message["id"].toString(),
+                    metadata: {
+                      "type": "video",
+                      "url": parsedContent["video"].toString(),
+                    },
                   );
                 }
 
@@ -329,7 +341,159 @@ class ChatScreen extends StatelessWidget {
                             height: 10,
                           ),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (_2) => fluent.ContentDialog(
+                                  title: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        AppLocale.choose_source_label.getString(
+                                          _2,
+                                        ),
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          ElevatedButton.icon(
+                                            onPressed: () async {
+                                              Navigator.of(_2).pop();
+
+                                              await Future.delayed(
+                                                const Duration(
+                                                  milliseconds: 200,
+                                                ),
+                                              );
+
+                                              Navigator.of(_1).pop();
+
+                                              chatProvider.setIsLoading(true);
+
+                                              try {
+                                                ImagePicker imagePicker =
+                                                    ImagePicker();
+
+                                                var file =
+                                                    await imagePicker.pickVideo(
+                                                  source: ImageSource.gallery,
+                                                );
+
+                                                if (file != null) {
+                                                  var res =
+                                                      await SingleChatsController
+                                                          .uploadChatVideo(
+                                                    chatProvider.chatId,
+                                                    File(
+                                                      file.path,
+                                                    ),
+                                                  );
+
+                                                  if (res["result"] == false) {
+                                                    Fluttertoast.showToast(
+                                                      msg: res["message"]
+                                                          .toString(),
+                                                    );
+                                                  }
+                                                }
+                                              } catch (e) {
+                                                print(e.toString());
+                                              }
+
+                                              chatProvider.setIsLoading(false);
+                                            },
+                                            label: Text(
+                                              AppLocale.gallery_label.getString(
+                                                _2,
+                                              ),
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            icon: const Icon(
+                                              Icons.photo_library,
+                                              size: 18,
+                                            ),
+                                          ),
+                                          ElevatedButton.icon(
+                                            onPressed: () async {
+                                              Navigator.of(_2).pop();
+
+                                              await Future.delayed(
+                                                const Duration(
+                                                  milliseconds: 200,
+                                                ),
+                                              );
+
+                                              Navigator.of(_1).pop();
+
+                                              chatProvider.setIsLoading(true);
+
+                                              try {
+                                                ImagePicker imagePicker =
+                                                    ImagePicker();
+
+                                                var file =
+                                                    await imagePicker.pickVideo(
+                                                  source: ImageSource.camera,
+                                                );
+
+                                                if (file != null) {
+                                                  var res =
+                                                      await SingleChatsController
+                                                          .uploadChatVideo(
+                                                    chatProvider.chatId,
+                                                    File(
+                                                      file.path,
+                                                    ),
+                                                  );
+
+                                                  if (res["result"] == false) {
+                                                    Fluttertoast.showToast(
+                                                      msg: res["message"]
+                                                          .toString(),
+                                                    );
+                                                  }
+                                                }
+                                              } catch (e) {
+                                                print(e.toString());
+                                              }
+
+                                              chatProvider.setIsLoading(false);
+                                            },
+                                            label: Text(
+                                              AppLocale.camera_label.getString(
+                                                _2,
+                                              ),
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            icon: const Icon(
+                                              Icons.camera,
+                                              size: 18,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.blueGrey.withOpacity(
@@ -445,6 +609,15 @@ class ChatScreen extends StatelessWidget {
                   context,
                   partialText.text,
                 );
+              },
+              customMessageBuilder: (p0, {required messageWidth}) {
+                if (p0.metadata!["type"] == "video") {
+                  return VideoMessage(
+                    url: p0.metadata!["url"],
+                  );
+                }
+
+                return Container();
               },
               showUserAvatars: true,
               showUserNames: true,

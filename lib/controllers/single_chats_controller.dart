@@ -1,7 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
+import 'package:merhaba_app/providers/post_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:path/path.dart' as p;
 
@@ -161,7 +165,10 @@ class SingleChatsController {
     }
   }
 
-  static Future<Map<String, dynamic>> getChatUserInfo(int id) async {
+  static Future<Map<String, dynamic>> getChatUserInfo(
+    int id,
+    BuildContext context,
+  ) async {
     try {
       var uid = await secureStorage.read(
         key: "uid",
@@ -202,14 +209,23 @@ class SingleChatsController {
 
       // print(messages.last);
 
+      var parsedLastMessage = jsonDecode(messages.last["content"].toString());
+
       return {
         "result": true,
         "message": "Retrieved successfully",
         "userData": userData,
-        "lastMessage": jsonDecode(
-          messages.last["content"].toString(),
-        )["text"]
-            .toString(),
+        "lastMessage": parsedLastMessage["type"] == "text"
+            ? parsedLastMessage["text"].toString()
+            : parsedLastMessage["type"] == "image"
+                ? "👾 ${AppLocale.image_label.getString(
+                    context,
+                  )}"
+                : parsedLastMessage["type"] == "video"
+                    ? "📹 ${AppLocale.video_label.getString(
+                        context,
+                      )}"
+                    : "",
       };
     } catch (e) {
       print(e.toString());
@@ -296,6 +312,63 @@ class SingleChatsController {
         "content": jsonEncode({
           "image": publicUrl,
           "type": "image",
+        }),
+        "active": true,
+        "date_added": DateTime.now().toIso8601String(),
+        "added_by": uid,
+      });
+
+      return {
+        "result": true,
+        "message": "Uploaded successfully ... ",
+        "url": publicUrl,
+        "filename": filename,
+        "fullPath": fullPath,
+      };
+    } catch (e) {
+      print(e.toString());
+      return {
+        "result": false,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> uploadChatVideo(
+      int chatId, File file) async {
+    try {
+      String filename =
+          "${DateTime.now().toIso8601String().replaceAll(" ", "").replaceAll(".", "").replaceAll(":", "")}_${p.basename(file.path).replaceAll(" ", "")}";
+
+      final String fullPath = await Supabase.instance.client.storage
+          .from('singlechats')
+          .upload(
+            filename,
+            file,
+            fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
+          );
+
+      final String publicUrl = Supabase.instance.client.storage
+          .from("singlechats")
+          .getPublicUrl(filename);
+
+      var uid = await secureStorage.read(
+        key: "uid",
+      );
+
+      if (uid == null) {
+        return {
+          "result": false,
+          "message": "Please login again!!",
+        };
+      }
+
+      await Supabase.instance.client.from("single_chat_messages").insert({
+        "chat_id": chatId,
+        "user_id": uid,
+        "content": jsonEncode({
+          "video": publicUrl,
+          "type": "video",
         }),
         "active": true,
         "date_added": DateTime.now().toIso8601String(),
