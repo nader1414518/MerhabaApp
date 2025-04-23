@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart' as chat_ui;
 import 'package:flutter_chat_types/flutter_chat_types.dart' as chat_types;
 import 'package:merhaba_app/providers/chat_provider.dart';
 import 'package:merhaba_app/utils/globals.dart';
+import 'package:merhaba_app/widgets/chat/file_message.dart';
 import 'package:merhaba_app/widgets/chat/video_message.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -109,6 +111,18 @@ class ChatScreen extends StatelessWidget {
                     metadata: {
                       "type": "video",
                       "url": parsedContent["video"].toString(),
+                    },
+                  );
+                } else if (parsedContent["type"] == "file") {
+                  return chat_types.CustomMessage(
+                    author: chat_types.User(
+                      id: message["user_id"].toString(),
+                    ),
+                    id: message["id"].toString(),
+                    metadata: {
+                      "type": "file",
+                      "url": parsedContent["file"].toString(),
+                      "filename": parsedContent["filename"].toString(),
                     },
                   );
                 }
@@ -547,7 +561,36 @@ class ChatScreen extends StatelessWidget {
                             height: 10,
                           ),
                           InkWell(
-                            onTap: () {},
+                            onTap: () async {
+                              Navigator.of(_1).pop();
+
+                              FilePickerResult? result =
+                                  await FilePicker.platform.pickFiles();
+
+                              if (result != null) {
+                                chatProvider.setIsLoading(true);
+
+                                try {
+                                  File file = File(result.files.single.path!);
+
+                                  var res = await SingleChatsController
+                                      .uploadChatFile(
+                                    chatProvider.chatId,
+                                    file,
+                                  );
+
+                                  if (res["result"] == false) {
+                                    Fluttertoast.showToast(
+                                      msg: res["message"].toString(),
+                                    );
+                                  }
+                                } catch (e) {
+                                  print(e.toString());
+                                }
+
+                                chatProvider.setIsLoading(false);
+                              }
+                            },
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.blueGrey.withOpacity(
@@ -614,6 +657,11 @@ class ChatScreen extends StatelessWidget {
                 if (p0.metadata!["type"] == "video") {
                   return VideoMessage(
                     url: p0.metadata!["url"],
+                  );
+                } else if (p0.metadata!["type"] == "file") {
+                  return FileMessage(
+                    url: p0.metadata!["url"],
+                    filename: p0.metadata!["filename"],
                   );
                 }
 
