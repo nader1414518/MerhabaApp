@@ -30,6 +30,7 @@ class _SingleChatCardState extends State<SingleChatCard> {
     try {
       var res = await SingleChatsController.getChatUserInfo(
         widget.chat["id"],
+        context,
       );
 
       if (res["result"] == true) {

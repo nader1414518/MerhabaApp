@@ -33,6 +33,12 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_typeahead: ^5.2.0
   flutter_chat_ui: ^1.6.15
+  video_player: ^2.9.5
+  permission_handler: ^11.3.1
+  dio: ^5.8.0+1
+  path_provider: ^2.1.5
+  file_picker: ^10.1.2
+  open_filex: ^4.7.0
 
   cupertino_icons: ^1.0.8
   supabase_flutter: ^2.8.2

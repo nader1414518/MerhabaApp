@@ -67,8 +67,14 @@ mixin AppLocale {
   static const String loading_label = "Loading ... ";
   static const String file_label = "File";
   static const String attchment_label = "Attachment";
+  static const String image_label = "Image";
+  static const String download_label = "Download";
+  static const String downloading_label = "Downloading ... ";
 
   static const Map<String, dynamic> EN = {
+    download_label: "Download",
+    downloading_label: "Downloading ... ",
+    image_label: "Image",
     file_label: "File",
     attchment_label: "Attachment",
     loading_label: "Loading ... ",
@@ -140,6 +146,9 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    download_label: "تحميل",
+    downloading_label: "جاري التحميل ...",
+    image_label: "صورة",
     file_label: "ملف",
     attchment_label: "ملحق",
     loading_label: "جاري التحميل ...",
