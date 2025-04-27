@@ -16,6 +16,7 @@ import 'package:merhaba_app/providers/chat_provider.dart';
 import 'package:merhaba_app/utils/globals.dart';
 import 'package:merhaba_app/widgets/chat/file_message.dart';
 import 'package:merhaba_app/widgets/chat/video_message.dart';
+import 'package:merhaba_app/widgets/chat/voice_recorder_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
@@ -78,291 +79,89 @@ class ChatScreen extends StatelessWidget {
 
             chatProvider.setMessages(messages);
 
-            return chat_ui.Chat(
-              messages: messages.map((message) {
-                Map<String, dynamic> parsedContent = Map<String, dynamic>.from(
-                  jsonDecode(message["content"].toString()) as Map,
-                );
+            return Stack(
+              children: [
+                chat_ui.Chat(
+                  messages: messages.map((message) {
+                    Map<String, dynamic> parsedContent =
+                        Map<String, dynamic>.from(
+                      jsonDecode(message["content"].toString()) as Map,
+                    );
 
-                if (parsedContent["type"] == "text") {
-                  return chat_types.TextMessage(
-                    author: chat_types.User(
-                      id: message["user_id"].toString(),
-                    ),
-                    id: message["id"].toString(),
-                    text: parsedContent["text"].toString(),
-                  );
-                } else if (parsedContent["type"] == "image") {
-                  return chat_types.ImageMessage(
-                    author: chat_types.User(
-                      id: message["user_id"].toString(),
-                    ),
-                    id: message["id"].toString(),
-                    name: "",
-                    size: 300,
-                    uri: parsedContent["image"].toString(),
-                  );
-                } else if (parsedContent["type"] == "video") {
-                  return chat_types.CustomMessage(
-                    author: chat_types.User(
-                      id: message["user_id"].toString(),
-                    ),
-                    id: message["id"].toString(),
-                    metadata: {
-                      "type": "video",
-                      "url": parsedContent["video"].toString(),
-                    },
-                  );
-                } else if (parsedContent["type"] == "file") {
-                  return chat_types.CustomMessage(
-                    author: chat_types.User(
-                      id: message["user_id"].toString(),
-                    ),
-                    id: message["id"].toString(),
-                    metadata: {
-                      "type": "file",
-                      "url": parsedContent["file"].toString(),
-                      "filename": parsedContent["filename"].toString(),
-                    },
-                  );
-                }
+                    if (parsedContent["type"] == "text") {
+                      return chat_types.TextMessage(
+                        author: chat_types.User(
+                          id: message["user_id"].toString(),
+                        ),
+                        id: message["id"].toString(),
+                        text: parsedContent["text"].toString(),
+                      );
+                    } else if (parsedContent["type"] == "image") {
+                      return chat_types.ImageMessage(
+                        author: chat_types.User(
+                          id: message["user_id"].toString(),
+                        ),
+                        id: message["id"].toString(),
+                        name: "",
+                        size: 300,
+                        uri: parsedContent["image"].toString(),
+                      );
+                    } else if (parsedContent["type"] == "video") {
+                      return chat_types.CustomMessage(
+                        author: chat_types.User(
+                          id: message["user_id"].toString(),
+                        ),
+                        id: message["id"].toString(),
+                        metadata: {
+                          "type": "video",
+                          "url": parsedContent["video"].toString(),
+                        },
+                      );
+                    } else if (parsedContent["type"] == "file") {
+                      return chat_types.CustomMessage(
+                        author: chat_types.User(
+                          id: message["user_id"].toString(),
+                        ),
+                        id: message["id"].toString(),
+                        metadata: {
+                          "type": "file",
+                          "url": parsedContent["file"].toString(),
+                          "filename": parsedContent["filename"].toString(),
+                        },
+                      );
+                    }
 
-                return chat_types.TextMessage(
-                  author: chat_types.User(
-                    id: message["user_id"].toString(),
-                  ),
-                  id: message["id"].toString(),
-                  text: "Invalid message",
-                );
-              }).toList(),
-              onAttachmentPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (_1) => fluent.ContentDialog(
-                    title: Text(
-                      AppLocale.choose_media_label.getString(
-                        _1,
+                    return chat_types.TextMessage(
+                      author: chat_types.User(
+                        id: message["user_id"].toString(),
                       ),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    content: Material(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (_2) => fluent.ContentDialog(
-                                  title: Text(
-                                    AppLocale.choose_source_label.getString(
-                                      _2,
-                                    ),
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          ElevatedButton.icon(
-                                            onPressed: () async {
-                                              Navigator.of(_2).pop();
-
-                                              await Future.delayed(
-                                                const Duration(
-                                                  milliseconds: 200,
-                                                ),
-                                              );
-
-                                              Navigator.of(_1).pop();
-
-                                              chatProvider.setIsLoading(true);
-
-                                              try {
-                                                ImagePicker imagePicker =
-                                                    ImagePicker();
-
-                                                var file =
-                                                    await imagePicker.pickImage(
-                                                  source: ImageSource.gallery,
-                                                  imageQuality: 50,
-                                                );
-
-                                                if (file != null) {
-                                                  var res =
-                                                      await SingleChatsController
-                                                          .uploadChatPhoto(
-                                                    chatProvider.chatId,
-                                                    File(
-                                                      file.path,
-                                                    ),
-                                                  );
-
-                                                  if (res["result"] == false) {
-                                                    Fluttertoast.showToast(
-                                                      msg: res["message"]
-                                                          .toString(),
-                                                    );
-                                                  }
-                                                }
-                                              } catch (e) {
-                                                print(e.toString());
-                                              }
-
-                                              chatProvider.setIsLoading(false);
-                                            },
-                                            label: Text(
-                                              AppLocale.gallery_label.getString(
-                                                _2,
-                                              ),
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            icon: const Icon(
-                                              Icons.photo_library,
-                                              size: 18,
-                                            ),
-                                          ),
-                                          ElevatedButton.icon(
-                                            onPressed: () async {
-                                              Navigator.of(_2).pop();
-
-                                              await Future.delayed(
-                                                const Duration(
-                                                  milliseconds: 200,
-                                                ),
-                                              );
-
-                                              Navigator.of(_1).pop();
-
-                                              chatProvider.setIsLoading(true);
-
-                                              try {
-                                                ImagePicker imagePicker =
-                                                    ImagePicker();
-
-                                                var file =
-                                                    await imagePicker.pickImage(
-                                                  source: ImageSource.camera,
-                                                  imageQuality: 50,
-                                                );
-
-                                                if (file != null) {
-                                                  var res =
-                                                      await SingleChatsController
-                                                          .uploadChatPhoto(
-                                                    chatProvider.chatId,
-                                                    File(
-                                                      file.path,
-                                                    ),
-                                                  );
-
-                                                  if (res["result"] == false) {
-                                                    Fluttertoast.showToast(
-                                                      msg: res["message"]
-                                                          .toString(),
-                                                    );
-                                                  }
-                                                }
-                                              } catch (e) {
-                                                print(e.toString());
-                                              }
-
-                                              chatProvider.setIsLoading(false);
-                                            },
-                                            label: Text(
-                                              AppLocale.camera_label.getString(
-                                                _2,
-                                              ),
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            icon: const Icon(
-                                              Icons.camera,
-                                              size: 18,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.blueGrey.withOpacity(
-                                  0.25,
-                                ),
-                                borderRadius: BorderRadius.circular(
-                                  8,
-                                ),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 10,
-                                horizontal: 10,
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SizedBox(
-                                    width: (MediaQuery.sizeOf(_1).width - 40) *
-                                        0.6,
-                                    child: Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.photo,
-                                          size: 20,
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          AppLocale.photo_label.getString(
-                                            _1,
-                                          ),
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_forward_ios_outlined,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
+                      id: message["id"].toString(),
+                      text: "Invalid message",
+                    );
+                  }).toList(),
+                  onAttachmentPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (_1) => fluent.ContentDialog(
+                        title: Text(
+                          AppLocale.choose_media_label.getString(
+                            _1,
                           ),
-                          const SizedBox(
-                            height: 10,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
-                          InkWell(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (_2) => fluent.ContentDialog(
-                                  title: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
+                        ),
+                        content: Material(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (_2) => fluent.ContentDialog(
+                                      title: Text(
                                         AppLocale.choose_source_label.getString(
                                           _2,
                                         ),
@@ -370,333 +169,595 @@ class ChatScreen extends StatelessWidget {
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                         ),
-                                        textAlign: TextAlign.center,
                                       ),
-                                    ],
-                                  ),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          ElevatedButton.icon(
-                                            onPressed: () async {
-                                              Navigator.of(_2).pop();
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              ElevatedButton.icon(
+                                                onPressed: () async {
+                                                  Navigator.of(_2).pop();
 
-                                              await Future.delayed(
-                                                const Duration(
-                                                  milliseconds: 200,
-                                                ),
-                                              );
-
-                                              Navigator.of(_1).pop();
-
-                                              chatProvider.setIsLoading(true);
-
-                                              try {
-                                                ImagePicker imagePicker =
-                                                    ImagePicker();
-
-                                                var file =
-                                                    await imagePicker.pickVideo(
-                                                  source: ImageSource.gallery,
-                                                );
-
-                                                if (file != null) {
-                                                  var res =
-                                                      await SingleChatsController
-                                                          .uploadChatVideo(
-                                                    chatProvider.chatId,
-                                                    File(
-                                                      file.path,
+                                                  await Future.delayed(
+                                                    const Duration(
+                                                      milliseconds: 200,
                                                     ),
                                                   );
 
-                                                  if (res["result"] == false) {
-                                                    Fluttertoast.showToast(
-                                                      msg: res["message"]
-                                                          .toString(),
+                                                  Navigator.of(_1).pop();
+
+                                                  chatProvider
+                                                      .setIsLoading(true);
+
+                                                  try {
+                                                    ImagePicker imagePicker =
+                                                        ImagePicker();
+
+                                                    var file = await imagePicker
+                                                        .pickImage(
+                                                      source:
+                                                          ImageSource.gallery,
+                                                      imageQuality: 50,
                                                     );
+
+                                                    if (file != null) {
+                                                      var res =
+                                                          await SingleChatsController
+                                                              .uploadChatPhoto(
+                                                        chatProvider.chatId,
+                                                        File(
+                                                          file.path,
+                                                        ),
+                                                      );
+
+                                                      if (res["result"] ==
+                                                          false) {
+                                                        Fluttertoast.showToast(
+                                                          msg: res["message"]
+                                                              .toString(),
+                                                        );
+                                                      }
+                                                    }
+                                                  } catch (e) {
+                                                    print(e.toString());
                                                   }
-                                                }
-                                              } catch (e) {
-                                                print(e.toString());
-                                              }
 
-                                              chatProvider.setIsLoading(false);
-                                            },
-                                            label: Text(
-                                              AppLocale.gallery_label.getString(
-                                                _2,
-                                              ),
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            icon: const Icon(
-                                              Icons.photo_library,
-                                              size: 18,
-                                            ),
-                                          ),
-                                          ElevatedButton.icon(
-                                            onPressed: () async {
-                                              Navigator.of(_2).pop();
-
-                                              await Future.delayed(
-                                                const Duration(
-                                                  milliseconds: 200,
+                                                  chatProvider
+                                                      .setIsLoading(false);
+                                                },
+                                                label: Text(
+                                                  AppLocale.gallery_label
+                                                      .getString(
+                                                    _2,
+                                                  ),
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
-                                              );
+                                                icon: const Icon(
+                                                  Icons.photo_library,
+                                                  size: 18,
+                                                ),
+                                              ),
+                                              ElevatedButton.icon(
+                                                onPressed: () async {
+                                                  Navigator.of(_2).pop();
 
-                                              Navigator.of(_1).pop();
-
-                                              chatProvider.setIsLoading(true);
-
-                                              try {
-                                                ImagePicker imagePicker =
-                                                    ImagePicker();
-
-                                                var file =
-                                                    await imagePicker.pickVideo(
-                                                  source: ImageSource.camera,
-                                                );
-
-                                                if (file != null) {
-                                                  var res =
-                                                      await SingleChatsController
-                                                          .uploadChatVideo(
-                                                    chatProvider.chatId,
-                                                    File(
-                                                      file.path,
+                                                  await Future.delayed(
+                                                    const Duration(
+                                                      milliseconds: 200,
                                                     ),
                                                   );
 
-                                                  if (res["result"] == false) {
-                                                    Fluttertoast.showToast(
-                                                      msg: res["message"]
-                                                          .toString(),
-                                                    );
-                                                  }
-                                                }
-                                              } catch (e) {
-                                                print(e.toString());
-                                              }
+                                                  Navigator.of(_1).pop();
 
-                                              chatProvider.setIsLoading(false);
-                                            },
-                                            label: Text(
-                                              AppLocale.camera_label.getString(
-                                                _2,
+                                                  chatProvider
+                                                      .setIsLoading(true);
+
+                                                  try {
+                                                    ImagePicker imagePicker =
+                                                        ImagePicker();
+
+                                                    var file = await imagePicker
+                                                        .pickImage(
+                                                      source:
+                                                          ImageSource.camera,
+                                                      imageQuality: 50,
+                                                    );
+
+                                                    if (file != null) {
+                                                      var res =
+                                                          await SingleChatsController
+                                                              .uploadChatPhoto(
+                                                        chatProvider.chatId,
+                                                        File(
+                                                          file.path,
+                                                        ),
+                                                      );
+
+                                                      if (res["result"] ==
+                                                          false) {
+                                                        Fluttertoast.showToast(
+                                                          msg: res["message"]
+                                                              .toString(),
+                                                        );
+                                                      }
+                                                    }
+                                                  } catch (e) {
+                                                    print(e.toString());
+                                                  }
+
+                                                  chatProvider
+                                                      .setIsLoading(false);
+                                                },
+                                                label: Text(
+                                                  AppLocale.camera_label
+                                                      .getString(
+                                                    _2,
+                                                  ),
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                icon: const Icon(
+                                                  Icons.camera,
+                                                  size: 18,
+                                                ),
                                               ),
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            icon: const Icon(
-                                              Icons.camera,
-                                              size: 18,
-                                            ),
+                                            ],
                                           ),
                                         ],
                                       ),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.blueGrey.withOpacity(
+                                      0.25,
+                                    ),
+                                    borderRadius: BorderRadius.circular(
+                                      8,
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 10,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width:
+                                            (MediaQuery.sizeOf(_1).width - 40) *
+                                                0.6,
+                                        child: Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.photo,
+                                              size: 20,
+                                            ),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              AppLocale.photo_label.getString(
+                                                _1,
+                                              ),
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const Icon(
+                                        Icons.arrow_forward_ios_outlined,
+                                        size: 20,
+                                      ),
                                     ],
                                   ),
                                 ),
-                              );
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.blueGrey.withOpacity(
-                                  0.25,
-                                ),
-                                borderRadius: BorderRadius.circular(
-                                  8,
-                                ),
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 10,
-                                horizontal: 10,
+                              const SizedBox(
+                                height: 10,
                               ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SizedBox(
-                                    width: (MediaQuery.sizeOf(_1).width - 40) *
-                                        0.6,
-                                    child: Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.video_call,
-                                          size: 20,
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          AppLocale.video_label.getString(
-                                            _1,
+                              InkWell(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (_2) => fluent.ContentDialog(
+                                      title: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            AppLocale.choose_source_label
+                                                .getString(
+                                              _2,
+                                            ),
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            textAlign: TextAlign.center,
                                           ),
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
+                                        ],
+                                      ),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              ElevatedButton.icon(
+                                                onPressed: () async {
+                                                  Navigator.of(_2).pop();
+
+                                                  await Future.delayed(
+                                                    const Duration(
+                                                      milliseconds: 200,
+                                                    ),
+                                                  );
+
+                                                  Navigator.of(_1).pop();
+
+                                                  chatProvider
+                                                      .setIsLoading(true);
+
+                                                  try {
+                                                    ImagePicker imagePicker =
+                                                        ImagePicker();
+
+                                                    var file = await imagePicker
+                                                        .pickVideo(
+                                                      source:
+                                                          ImageSource.gallery,
+                                                    );
+
+                                                    if (file != null) {
+                                                      var res =
+                                                          await SingleChatsController
+                                                              .uploadChatVideo(
+                                                        chatProvider.chatId,
+                                                        File(
+                                                          file.path,
+                                                        ),
+                                                      );
+
+                                                      if (res["result"] ==
+                                                          false) {
+                                                        Fluttertoast.showToast(
+                                                          msg: res["message"]
+                                                              .toString(),
+                                                        );
+                                                      }
+                                                    }
+                                                  } catch (e) {
+                                                    print(e.toString());
+                                                  }
+
+                                                  chatProvider
+                                                      .setIsLoading(false);
+                                                },
+                                                label: Text(
+                                                  AppLocale.gallery_label
+                                                      .getString(
+                                                    _2,
+                                                  ),
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                icon: const Icon(
+                                                  Icons.photo_library,
+                                                  size: 18,
+                                                ),
+                                              ),
+                                              ElevatedButton.icon(
+                                                onPressed: () async {
+                                                  Navigator.of(_2).pop();
+
+                                                  await Future.delayed(
+                                                    const Duration(
+                                                      milliseconds: 200,
+                                                    ),
+                                                  );
+
+                                                  Navigator.of(_1).pop();
+
+                                                  chatProvider
+                                                      .setIsLoading(true);
+
+                                                  try {
+                                                    ImagePicker imagePicker =
+                                                        ImagePicker();
+
+                                                    var file = await imagePicker
+                                                        .pickVideo(
+                                                      source:
+                                                          ImageSource.camera,
+                                                    );
+
+                                                    if (file != null) {
+                                                      var res =
+                                                          await SingleChatsController
+                                                              .uploadChatVideo(
+                                                        chatProvider.chatId,
+                                                        File(
+                                                          file.path,
+                                                        ),
+                                                      );
+
+                                                      if (res["result"] ==
+                                                          false) {
+                                                        Fluttertoast.showToast(
+                                                          msg: res["message"]
+                                                              .toString(),
+                                                        );
+                                                      }
+                                                    }
+                                                  } catch (e) {
+                                                    print(e.toString());
+                                                  }
+
+                                                  chatProvider
+                                                      .setIsLoading(false);
+                                                },
+                                                label: Text(
+                                                  AppLocale.camera_label
+                                                      .getString(
+                                                    _2,
+                                                  ),
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                icon: const Icon(
+                                                  Icons.camera,
+                                                  size: 18,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_forward_ios_outlined,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          InkWell(
-                            onTap: () async {
-                              Navigator.of(_1).pop();
-
-                              FilePickerResult? result =
-                                  await FilePicker.platform.pickFiles();
-
-                              if (result != null) {
-                                chatProvider.setIsLoading(true);
-
-                                try {
-                                  File file = File(result.files.single.path!);
-
-                                  var res = await SingleChatsController
-                                      .uploadChatFile(
-                                    chatProvider.chatId,
-                                    file,
                                   );
-
-                                  if (res["result"] == false) {
-                                    Fluttertoast.showToast(
-                                      msg: res["message"].toString(),
-                                    );
-                                  }
-                                } catch (e) {
-                                  print(e.toString());
-                                }
-
-                                chatProvider.setIsLoading(false);
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.blueGrey.withOpacity(
-                                  0.25,
-                                ),
-                                borderRadius: BorderRadius.circular(
-                                  8,
-                                ),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 10,
-                                horizontal: 10,
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SizedBox(
-                                    width: (MediaQuery.sizeOf(_1).width - 40) *
-                                        0.6,
-                                    child: Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.attachment,
-                                          size: 20,
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          AppLocale.attchment_label.getString(
-                                            _1,
-                                          ),
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.blueGrey.withOpacity(
+                                      0.25,
+                                    ),
+                                    borderRadius: BorderRadius.circular(
+                                      8,
                                     ),
                                   ),
-                                  const Icon(
-                                    Icons.arrow_forward_ios_outlined,
-                                    size: 20,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 10,
                                   ),
-                                ],
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width:
+                                            (MediaQuery.sizeOf(_1).width - 40) *
+                                                0.6,
+                                        child: Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.video_call,
+                                              size: 20,
+                                            ),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              AppLocale.video_label.getString(
+                                                _1,
+                                              ),
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const Icon(
+                                        Icons.arrow_forward_ios_outlined,
+                                        size: 20,
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-              onMessageTap: (_, msg) {},
-              onSendPressed: (partialText) {
-                chatProvider.onSendMessage(
-                  context,
-                  partialText.text,
-                );
-              },
-              customMessageBuilder: (p0, {required messageWidth}) {
-                if (p0.metadata!["type"] == "video") {
-                  return VideoMessage(
-                    url: p0.metadata!["url"],
-                  );
-                } else if (p0.metadata!["type"] == "file") {
-                  return FileMessage(
-                    url: p0.metadata!["url"],
-                    filename: p0.metadata!["filename"],
-                  );
-                }
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              InkWell(
+                                onTap: () async {
+                                  Navigator.of(_1).pop();
 
-                return Container();
-              },
-              showUserAvatars: true,
-              showUserNames: true,
-              user: chat_types.User(
-                id: Supabase.instance.client.auth.currentUser!.id,
-              ),
-              theme: Globals.theme == "Dark"
-                  ? chat_ui.DarkChatTheme()
-                  : chat_ui.DefaultChatTheme(),
+                                  FilePickerResult? result =
+                                      await FilePicker.platform.pickFiles();
+
+                                  if (result != null) {
+                                    chatProvider.setIsLoading(true);
+
+                                    try {
+                                      File file =
+                                          File(result.files.single.path!);
+
+                                      var res = await SingleChatsController
+                                          .uploadChatFile(
+                                        chatProvider.chatId,
+                                        file,
+                                      );
+
+                                      if (res["result"] == false) {
+                                        Fluttertoast.showToast(
+                                          msg: res["message"].toString(),
+                                        );
+                                      }
+                                    } catch (e) {
+                                      print(e.toString());
+                                    }
+
+                                    chatProvider.setIsLoading(false);
+                                  }
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.blueGrey.withOpacity(
+                                      0.25,
+                                    ),
+                                    borderRadius: BorderRadius.circular(
+                                      8,
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal: 10,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width:
+                                            (MediaQuery.sizeOf(_1).width - 40) *
+                                                0.6,
+                                        child: Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.attachment,
+                                              size: 20,
+                                            ),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              AppLocale.attchment_label
+                                                  .getString(
+                                                _1,
+                                              ),
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const Icon(
+                                        Icons.arrow_forward_ios_outlined,
+                                        size: 20,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  onMessageTap: (_, msg) {},
+                  onSendPressed: (partialText) {
+                    chatProvider.onSendMessage(
+                      context,
+                      partialText.text,
+                    );
+                  },
+                  inputOptions: chat_ui.InputOptions(
+                    sendButtonVisibilityMode:
+                        chat_ui.SendButtonVisibilityMode.always,
+                    onTextChanged: (text) {
+                      chatProvider.setIsInputEmpty(text.isEmpty);
+                    },
+                  ),
+                  customMessageBuilder: (p0, {required messageWidth}) {
+                    if (p0.metadata!["type"] == "video") {
+                      return VideoMessage(
+                        url: p0.metadata!["url"],
+                      );
+                    } else if (p0.metadata!["type"] == "file") {
+                      return FileMessage(
+                        url: p0.metadata!["url"],
+                        filename: p0.metadata!["filename"],
+                      );
+                    }
+
+                    return Container();
+                  },
+                  showUserAvatars: true,
+                  showUserNames: true,
+                  user: chat_types.User(
+                    id: Supabase.instance.client.auth.currentUser!.id,
+                  ),
+                  theme: Globals.theme == "Dark"
+                      ? chat_ui.DarkChatTheme(
+                          sendButtonIcon: chatProvider.isInputEmpty
+                              ? InkWell(
+                                  onTap: () {
+                                    chatProvider.toggleVoiceRecorderOpen();
+                                  },
+                                  child: Icon(
+                                    Icons.mic,
+                                    color: chatProvider.isVoiceRecorderOpen
+                                        ? Colors.blue
+                                        : Colors.white,
+                                  ),
+                                )
+                              : const Icon(
+                                  Icons.send,
+                                  size: 30,
+                                ),
+                        )
+                      : chat_ui.DefaultChatTheme(
+                          sendButtonIcon: chatProvider.isInputEmpty
+                              ? InkWell(
+                                  onTap: () {
+                                    chatProvider.toggleVoiceRecorderOpen();
+                                  },
+                                  child: Icon(
+                                    Icons.mic,
+                                    color: chatProvider.isVoiceRecorderOpen
+                                        ? Colors.blue
+                                        : Colors.white,
+                                  ),
+                                )
+                              : const Icon(
+                                  Icons.send,
+                                ),
+                        ),
+                ),
+                if (chatProvider.isVoiceRecorderOpen)
+                  const Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: VoiceRecorderWidget(),
+                  ),
+              ],
             );
           },
         ),
-        // body: chat_ui.Chat(
-        //   messages: [],
-        //   onAttachmentPressed: () {},
-        //   onMessageTap: (_, msg) {},
-        //   onSendPressed: (partialText) {
-        //     chatProvider.onSendMessage(
-        //       context,
-        //       partialText.text,
-        //     );
-        //   },
-        //   showUserAvatars: true,
-        //   showUserNames: true,
-        //   user: chat_types.User(
-        //     id: Supabase.instance.client.auth.currentUser!.id,
-        //   ),
-        //   theme: Globals.theme == "Dark"
-        //       ? chat_ui.DarkChatTheme()
-        //       : chat_ui.DefaultChatTheme(),
-        // ),
       ),
     );
   }

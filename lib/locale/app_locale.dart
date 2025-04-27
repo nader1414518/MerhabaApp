@@ -70,8 +70,16 @@ mixin AppLocale {
   static const String image_label = "Image";
   static const String download_label = "Download";
   static const String downloading_label = "Downloading ... ";
+  static const String tap_to_record_label = "Tap to record";
+  static const String voice_recorder_label = "Voice Recorder";
+  static const String recording_label = "Recording ... ";
+  static const String recording_finished_label = "Recording finished";
 
   static const Map<String, dynamic> EN = {
+    tap_to_record_label: "Tap to record",
+    voice_recorder_label: "Voice Recorder",
+    recording_label: "Recording ... ",
+    recording_finished_label: "Recording finished",
     download_label: "Download",
     downloading_label: "Downloading ... ",
     image_label: "Image",
@@ -146,6 +154,10 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    tap_to_record_label: "اضغط للتسجيل",
+    voice_recorder_label: "مسح الصوت",
+    recording_label: "جاري التسجيل ...",
+    recording_finished_label: "تم التسجيل",
     download_label: "تحميل",
     downloading_label: "جاري التحميل ...",
     image_label: "صورة",
