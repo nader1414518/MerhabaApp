@@ -17,6 +17,35 @@ class ChatProvider with ChangeNotifier {
   Map<String, dynamic> _chatData = {};
   Map<String, dynamic> get chatData => _chatData;
 
+  bool _isInputEmpty = true;
+  bool get isInputEmpty => _isInputEmpty;
+
+  bool _isVoiceRecorderOpen = false;
+  bool get isVoiceRecorderOpen => _isVoiceRecorderOpen;
+
+  bool _isVoiceRecorderRecording = false;
+  bool get isVoiceRecorderRecording => _isVoiceRecorderRecording;
+
+  setIsVoiceRecorderRecording(bool value) {
+    _isVoiceRecorderRecording = value;
+    notifyListeners();
+  }
+
+  setIsVoiceRecorderOpen(bool value) {
+    _isVoiceRecorderOpen = value;
+    notifyListeners();
+  }
+
+  toggleVoiceRecorderOpen() {
+    _isVoiceRecorderOpen = !_isVoiceRecorderOpen;
+    notifyListeners();
+  }
+
+  setIsInputEmpty(bool value) {
+    _isInputEmpty = value;
+    notifyListeners();
+  }
+
   setChatData(Map<String, dynamic> value) {
     _chatData = value;
     notifyListeners();
