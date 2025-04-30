@@ -452,4 +452,65 @@ class SingleChatsController {
       };
     }
   }
+
+  static Future<Map<String, dynamic>> uploadChatAudio(
+    int chatId,
+    File file,
+  ) async {
+    print("Sending audio to server");
+    try {
+      String filename =
+          "${DateTime.now().toIso8601String().replaceAll(" ", "").replaceAll(".", "").replaceAll(":", "")}_${p.basename(file.path).replaceAll(" ", "")}";
+
+      final String fullPath = await Supabase.instance.client.storage
+          .from('singlechats')
+          .upload(
+            filename,
+            file,
+            fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
+          );
+
+      final String publicUrl = Supabase.instance.client.storage
+          .from("singlechats")
+          .getPublicUrl(filename);
+
+      var uid = await secureStorage.read(
+        key: "uid",
+      );
+
+      if (uid == null) {
+        return {
+          "result": false,
+          "message": "Please login again!!",
+        };
+      }
+
+      await Supabase.instance.client.from("single_chat_messages").insert({
+        "chat_id": chatId,
+        "user_id": uid,
+        "content": jsonEncode({
+          "voice": publicUrl,
+          "type": "voice",
+          "filename": filename,
+        }),
+        "active": true,
+        "date_added": DateTime.now().toIso8601String(),
+        "added_by": uid,
+      });
+
+      return {
+        "result": true,
+        "message": "Uploaded successfully ... ",
+        "url": publicUrl,
+        "filename": filename,
+        "fullPath": fullPath,
+      };
+    } catch (e) {
+      print(e.toString());
+      return {
+        "result": false,
+        "message": e.toString(),
+      };
+    }
+  }
 }
