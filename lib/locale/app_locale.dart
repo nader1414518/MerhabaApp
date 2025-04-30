@@ -74,8 +74,24 @@ mixin AppLocale {
   static const String voice_recorder_label = "Voice Recorder";
   static const String recording_label = "Recording ... ";
   static const String recording_finished_label = "Recording finished";
+  static const String record_label = "Record";
+  static const String stop_label = "Stop";
+  static const String recording_in_progress_label = "Recording in progress";
+  static const String recorder_is_stopped_label = "Recorder is stopped";
+  static const String play_label = "Play";
+  static const String playback_in_progress_label = "Playback in progress";
+  static const String player_is_stopped_label = "Player is stopped";
+  static const String send_label = "Send";
 
   static const Map<String, dynamic> EN = {
+    send_label: "Send",
+    record_label: "Record",
+    stop_label: "Stop",
+    recording_in_progress_label: "Recording in progress",
+    recorder_is_stopped_label: "Recorder is stopped",
+    play_label: "Play",
+    playback_in_progress_label: "Playback in progress",
+    player_is_stopped_label: "Player is stopped",
     tap_to_record_label: "Tap to record",
     voice_recorder_label: "Voice Recorder",
     recording_label: "Recording ... ",
@@ -154,6 +170,14 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    send_label: "إرسال",
+    record_label: "تسجيل",
+    stop_label: "توقف",
+    recording_in_progress_label: "جاري التسجيل ...",
+    recorder_is_stopped_label: "تم التوقف",
+    play_label: "تشغيل",
+    playback_in_progress_label: "جاري التشغيل ...",
+    player_is_stopped_label: "تم التوقف",
     tap_to_record_label: "اضغط للتسجيل",
     voice_recorder_label: "مسح الصوت",
     recording_label: "جاري التسجيل ...",

@@ -39,6 +39,7 @@ dependencies:
   path_provider: ^2.1.5
   file_picker: ^10.1.2
   open_filex: ^4.7.0
+  flutter_sound: ^9.28.0
 
   cupertino_icons: ^1.0.8
   supabase_flutter: ^2.8.2
