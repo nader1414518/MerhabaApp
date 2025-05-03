@@ -229,7 +229,11 @@ class SingleChatsController {
                         ? "🗄️ ${AppLocale.attchment_label.getString(
                             context,
                           )}"
-                        : "",
+                        : parsedLastMessage["type"] == "voice"
+                            ? "🔊 ${AppLocale.voice_label.getString(
+                                context,
+                              )}"
+                            : "",
       };
     } catch (e) {
       print(e.toString());

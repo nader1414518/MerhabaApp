@@ -16,6 +16,7 @@ import 'package:merhaba_app/providers/chat_provider.dart';
 import 'package:merhaba_app/utils/globals.dart';
 import 'package:merhaba_app/widgets/chat/file_message.dart';
 import 'package:merhaba_app/widgets/chat/video_message.dart';
+import 'package:merhaba_app/widgets/chat/voice_message.dart';
 import 'package:merhaba_app/widgets/chat/voice_recorder_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -126,6 +127,18 @@ class ChatScreen extends StatelessWidget {
                         metadata: {
                           "type": "file",
                           "url": parsedContent["file"].toString(),
+                          "filename": parsedContent["filename"].toString(),
+                        },
+                      );
+                    } else if (parsedContent["type"] == "voice") {
+                      return chat_types.CustomMessage(
+                        author: chat_types.User(
+                          id: message["user_id"].toString(),
+                        ),
+                        id: message["id"].toString(),
+                        metadata: {
+                          "type": "voice",
+                          "url": parsedContent["voice"].toString(),
                           "filename": parsedContent["filename"].toString(),
                         },
                       );
@@ -698,6 +711,11 @@ class ChatScreen extends StatelessWidget {
                       );
                     } else if (p0.metadata!["type"] == "file") {
                       return FileMessage(
+                        url: p0.metadata!["url"],
+                        filename: p0.metadata!["filename"],
+                      );
+                    } else if (p0.metadata!["type"] == "voice") {
+                      return VoiceMessage(
                         url: p0.metadata!["url"],
                         filename: p0.metadata!["filename"],
                       );
