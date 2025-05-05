@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:merhaba_app/controllers/auth_controller.dart';
+import 'package:merhaba_app/controllers/users_controller.dart';
 
 class ProfileTabProvider with ChangeNotifier {
   bool _isLoading = false;
@@ -34,6 +35,8 @@ class ProfileTabProvider with ChangeNotifier {
         _photoUrl = url;
         notifyListeners();
       }
+
+      await UsersController.updateUserProfilePicture(url);
     } catch (e) {
       print(e.toString());
     }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:merhaba_app/controllers/single_chats_controller.dart';
+import 'package:merhaba_app/controllers/users_controller.dart';
+import 'package:merhaba_app/main.dart';
 
 class ChatProvider with ChangeNotifier {
   bool _isLoading = false;
@@ -17,6 +19,9 @@ class ChatProvider with ChangeNotifier {
   Map<String, dynamic> _chatData = {};
   Map<String, dynamic> get chatData => _chatData;
 
+  Map<String, dynamic> _otherUserData = {};
+  Map<String, dynamic> get otherUserData => _otherUserData;
+
   bool _isInputEmpty = true;
   bool get isInputEmpty => _isInputEmpty;
 
@@ -25,6 +30,11 @@ class ChatProvider with ChangeNotifier {
 
   bool _isVoiceRecorderRecording = false;
   bool get isVoiceRecorderRecording => _isVoiceRecorderRecording;
+
+  setOtherUserData(Map<String, dynamic> value) {
+    _otherUserData = value;
+    notifyListeners();
+  }
 
   setIsVoiceRecorderRecording(bool value) {
     _isVoiceRecorderRecording = value;
@@ -46,8 +56,28 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  setChatData(Map<String, dynamic> value) {
+  setChatData(Map<String, dynamic> value) async {
     _chatData = value;
+    try {
+      var uid = await secureStorage.read(
+        key: "uid",
+      );
+
+      if (uid == null) {
+        return {
+          "result": false,
+          "message": "Please login again!!",
+        };
+      }
+
+      if (_chatData["user1_id"] == uid) {
+        _otherUserId = _chatData["user2_id"];
+      } else {
+        _otherUserId = _chatData["user1_id"];
+      }
+    } catch (e) {
+      print(e.toString());
+    }
     notifyListeners();
   }
 
@@ -130,11 +160,30 @@ class ChatProvider with ChangeNotifier {
     }
   }
 
+  Future<void> getOtherUserData() async {
+    try {
+      // print(otherUserId);
+      var res = await UsersController.getUserData(otherUserId);
+
+      if (res["result"] == true) {
+        // print(res["data"]);
+        setOtherUserData(res["data"]);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   Future<void> getData() async {
     setIsLoading(true);
 
     try {
+      // setChatId(-1);
+      setChatData({});
+      clearMessages();
+
       await getChatData();
+      await getOtherUserData();
     } catch (e) {
       print(e.toString());
     }

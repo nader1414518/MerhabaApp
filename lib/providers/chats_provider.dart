@@ -18,7 +18,7 @@ class ChatsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  clearChats(Map<String, dynamic> value) {
+  clearChats() {
     _chats.clear();
     notifyListeners();
   }
@@ -37,6 +37,8 @@ class ChatsProvider with ChangeNotifier {
     try {
       var res = await SingleChatsController.getMyChats();
 
+      print(res.length);
+
       setChats(res);
     } catch (e) {
       print(e.toString());
@@ -47,6 +49,8 @@ class ChatsProvider with ChangeNotifier {
     setIsLoading(true);
 
     try {
+      clearChats();
+
       await getChats();
     } catch (e) {
       print(e.toString());

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -38,24 +39,47 @@ class ChatScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: false,
-          title: Text(
-            AppLocale.chat_label.getString(
-              context,
-            ),
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          )
-              .animate(
-                onPlay: (controller) => controller.repeat(),
+          // leading: IconButton(
+          //   onPressed: () {
+          //     Navigator.of(context).pop();
+          //   },
+          //   icon: const Icon(
+          //     Icons.arrow_back_ios_new,
+          //   ),
+          // ),
+          title: Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundImage: chatProvider.otherUserData["photo_url"] == null
+                    ? const AssetImage(
+                        "assets/images/profile_avatar.png",
+                      )
+                    : CachedNetworkImageProvider(
+                        chatProvider.otherUserData["photo_url"].toString(),
+                      ),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(
+                chatProvider.otherUserData["full_name"].toString(),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               )
-              .shimmer(duration: 3000.ms, color: const Color(0xFF80DDFF))
-              .animate(
-                  // onPlay: (controller) => controller.repeat(),
-                  ) // this wraps the previous Animate in another Animate
-              .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
-              .slide(),
+                  .animate(
+                    onPlay: (controller) => controller.repeat(),
+                  )
+                  .shimmer(duration: 3000.ms, color: const Color(0xFF80DDFF))
+                  .animate(
+                      // onPlay: (controller) => controller.repeat(),
+                      ) // this wraps the previous Animate in another Animate
+                  .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
+                  .slide(),
+            ],
+          ),
         ),
         body: StreamBuilder(
           stream: Supabase.instance.client
@@ -75,7 +99,11 @@ class ChatScreen extends StatelessWidget {
                     ),
                   ),
                 );
+
+                print(messages.length);
               }
+            } else {
+              messages = [];
             }
 
             chatProvider.setMessages(messages);
