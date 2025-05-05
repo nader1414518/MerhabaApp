@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:merhaba_app/controllers/single_chats_controller.dart';
@@ -39,6 +40,8 @@ class _SingleChatCardState extends State<SingleChatCard> {
             res["userData"] as Map,
           );
 
+          // print(otherUserData);
+
           lastMessage = res["lastMessage"].toString();
         });
       }
@@ -67,6 +70,15 @@ class _SingleChatCardState extends State<SingleChatCard> {
             "/chat",
           );
         },
+        leading: CircleAvatar(
+          backgroundImage: otherUserData["photo_url"] == null
+              ? const AssetImage(
+                  "assets/images/profile_avatar.png",
+                )
+              : CachedNetworkImageProvider(
+                  otherUserData["photo_url"].toString(),
+                ),
+        ),
         title: Text(
           otherUserData.isEmpty
               ? AppLocale.loading_label.getString(
