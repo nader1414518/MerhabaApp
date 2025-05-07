@@ -14,6 +14,7 @@ import 'package:merhaba_app/main.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart' as chat_ui;
 import 'package:flutter_chat_types/flutter_chat_types.dart' as chat_types;
 import 'package:merhaba_app/providers/chat_provider.dart';
+import 'package:merhaba_app/providers/public_profile_provider.dart';
 import 'package:merhaba_app/utils/globals.dart';
 import 'package:merhaba_app/widgets/chat/file_message.dart';
 import 'package:merhaba_app/widgets/chat/video_message.dart';
@@ -47,38 +48,55 @@ class ChatScreen extends StatelessWidget {
           //     Icons.arrow_back_ios_new,
           //   ),
           // ),
-          title: Row(
-            children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundImage: chatProvider.otherUserData["photo_url"] == null
-                    ? const AssetImage(
-                        "assets/images/profile_avatar.png",
-                      )
-                    : CachedNetworkImageProvider(
-                        chatProvider.otherUserData["photo_url"].toString(),
-                      ),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(
-                chatProvider.otherUserData["full_name"].toString(),
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+          title: GestureDetector(
+            onTap: () {
+              final publicProfileProvider = Provider.of<PublicProfileProvider>(
+                context,
+                listen: false,
+              );
+
+              publicProfileProvider.setUID(chatProvider.otherUserId);
+
+              publicProfileProvider.getData();
+
+              Navigator.of(context, rootNavigator: true).pushNamed(
+                "/public_profile",
+              );
+            },
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 18,
+                  backgroundImage: chatProvider.otherUserData["photo_url"] ==
+                          null
+                      ? const AssetImage(
+                          "assets/images/profile_avatar.png",
+                        )
+                      : CachedNetworkImageProvider(
+                          chatProvider.otherUserData["photo_url"].toString(),
+                        ),
                 ),
-              )
-                  .animate(
-                    onPlay: (controller) => controller.repeat(),
-                  )
-                  .shimmer(duration: 3000.ms, color: const Color(0xFF80DDFF))
-                  .animate(
-                      // onPlay: (controller) => controller.repeat(),
-                      ) // this wraps the previous Animate in another Animate
-                  .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
-                  .slide(),
-            ],
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  chatProvider.otherUserData["full_name"].toString(),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+                    .animate(
+                      onPlay: (controller) => controller.repeat(),
+                    )
+                    .shimmer(duration: 3000.ms, color: const Color(0xFF80DDFF))
+                    .animate(
+                        // onPlay: (controller) => controller.repeat(),
+                        ) // this wraps the previous Animate in another Animate
+                    .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
+                    .slide(),
+              ],
+            ),
           ),
         ),
         body: StreamBuilder(
