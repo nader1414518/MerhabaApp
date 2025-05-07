@@ -18,6 +18,7 @@ import 'package:merhaba_app/providers/login_provider.dart';
 import 'package:merhaba_app/providers/new_post_provider.dart';
 import 'package:merhaba_app/providers/post_provider.dart';
 import 'package:merhaba_app/providers/profile_tab_provider.dart';
+import 'package:merhaba_app/providers/public_profile_provider.dart';
 import 'package:merhaba_app/providers/timeline_provider.dart';
 import 'package:merhaba_app/screens/authentication/create_account_screen.dart';
 import 'package:merhaba_app/screens/authentication/login_screen.dart';
@@ -28,6 +29,7 @@ import 'package:merhaba_app/screens/general/home_screen.dart';
 import 'package:merhaba_app/screens/general/welcome_screen.dart';
 import 'package:merhaba_app/screens/location/location_viewer.dart';
 import 'package:merhaba_app/screens/posts/post_screen.dart';
+import 'package:merhaba_app/screens/public_profile/public_profile_screen.dart';
 import 'package:merhaba_app/screens/tabs/home/new_post_screen.dart';
 import 'package:merhaba_app/screens/tabs/profile/app_settings_screen.dart';
 import 'package:merhaba_app/utils/globals.dart';
@@ -136,6 +138,9 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (_) => ChatProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => PublicProfileProvider(),
       ),
     ],
     child: const MyApp(),
@@ -258,6 +263,7 @@ class MyAppState extends State<MyApp> {
           "/chats": (context) => const ChatsScreen(),
           "/contact_search": (context) => const ContactSearchScreen(),
           "/chat": (context) => const ChatScreen(),
+          "/public_profile": (context) => const PublicProfileScreen(),
         },
       ),
     );

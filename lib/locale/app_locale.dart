@@ -83,8 +83,10 @@ mixin AppLocale {
   static const String player_is_stopped_label = "Player is stopped";
   static const String send_label = "Send";
   static const String voice_label = "Voice";
+  static const String user_profile_label = "User Profile";
 
   static const Map<String, dynamic> EN = {
+    user_profile_label: "User Profile",
     voice_label: "Voice",
     send_label: "Send",
     record_label: "Record",
@@ -172,6 +174,7 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    user_profile_label: "الصفحة الشخصية",
     voice_label: "صوت",
     send_label: "إرسال",
     record_label: "تسجيل",
