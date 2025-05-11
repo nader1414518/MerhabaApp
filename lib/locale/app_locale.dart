@@ -84,8 +84,16 @@ mixin AppLocale {
   static const String send_label = "Send";
   static const String voice_label = "Voice";
   static const String user_profile_label = "User Profile";
+  static const String add_friend_label = "Add Friend";
+  static const String remove_friend_label = "Remove Friend";
+  static const String block_label = "Block";
+  static const String no_data_found_label = "No data found";
 
   static const Map<String, dynamic> EN = {
+    no_data_found_label: "No data found",
+    block_label: "Block",
+    add_friend_label: "Add Friend",
+    remove_friend_label: "Remove Friend",
     user_profile_label: "User Profile",
     voice_label: "Voice",
     send_label: "Send",
@@ -174,6 +182,10 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    no_data_found_label: "لا يوجد بيانات",
+    block_label: "حظر",
+    add_friend_label: "إضافة صديق",
+    remove_friend_label: "إزالة صديق",
     user_profile_label: "الصفحة الشخصية",
     voice_label: "صوت",
     send_label: "إرسال",
