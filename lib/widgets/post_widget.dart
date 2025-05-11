@@ -11,6 +11,7 @@ import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/app_settings_provider.dart';
 import 'package:merhaba_app/providers/post_provider.dart';
+import 'package:merhaba_app/providers/public_profile_provider.dart';
 import 'package:merhaba_app/providers/timeline_provider.dart';
 import 'package:merhaba_app/screens/common/photo_viewer_screen.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
@@ -164,32 +165,33 @@ class _PostWidgetState extends State<PostWidget> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SizedBox(
-                            width:
-                                (MediaQuery.sizeOf(context).width - 40) * 0.7,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                widget.post["user_photo"] == ""
-                                    ? Container(
-                                        height: 30,
-                                        width: 30,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            60,
-                                          ),
-                                          image: DecorationImage(
-                                            image: AssetImage(
-                                              AssetsUtils.profileAvatar,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : CachedNetworkImage(
-                                        imageUrl: widget.post["user_photo"],
-                                        imageBuilder:
-                                            (context, imageProvider) =>
-                                                Container(
+                          InkWell(
+                            onTap: () {
+                              final publicProfileProvider =
+                                  Provider.of<PublicProfileProvider>(
+                                context,
+                                listen: false,
+                              );
+
+                              publicProfileProvider.setUID(
+                                widget.post["user_id"],
+                              );
+
+                              publicProfileProvider.getData();
+
+                              Navigator.of(context, rootNavigator: true)
+                                  .pushNamed(
+                                "/public_profile",
+                              );
+                            },
+                            child: SizedBox(
+                              width:
+                                  (MediaQuery.sizeOf(context).width - 40) * 0.7,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  widget.post["user_photo"] == ""
+                                      ? Container(
                                           height: 30,
                                           width: 30,
                                           decoration: BoxDecoration(
@@ -197,70 +199,92 @@ class _PostWidgetState extends State<PostWidget> {
                                               60,
                                             ),
                                             image: DecorationImage(
-                                              image: imageProvider,
-                                              fit: BoxFit.cover,
+                                              image: AssetImage(
+                                                AssetsUtils.profileAvatar,
+                                              ),
                                             ),
                                           ),
+                                        )
+                                      : CachedNetworkImage(
+                                          imageUrl: widget.post["user_photo"],
+                                          imageBuilder:
+                                              (context, imageProvider) =>
+                                                  Container(
+                                            height: 30,
+                                            width: 30,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                60,
+                                              ),
+                                              image: DecorationImage(
+                                                image: imageProvider,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                          placeholder: (context, url) =>
+                                              const CircularProgressIndicator(),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(Icons.error),
                                         ),
-                                        placeholder: (context, url) =>
-                                            const CircularProgressIndicator(),
-                                        errorWidget: (context, url, error) =>
-                                            const Icon(Icons.error),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SizedBox(
+                                        width:
+                                            (MediaQuery.sizeOf(context).width -
+                                                    65) *
+                                                0.4,
+                                        child: TextWidget(
+                                          text: widget.post["username"]
+                                              .toString(),
+                                          // textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            // color: Colors.grey,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SizedBox(
-                                      width: (MediaQuery.sizeOf(context).width -
-                                              65) *
-                                          0.4,
-                                      child: TextWidget(
-                                        text:
-                                            widget.post["username"].toString(),
-                                        // textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          // color: Colors.grey,
+                                      SizedBox(
+                                        width:
+                                            (MediaQuery.sizeOf(context).width -
+                                                    65) *
+                                                0.4,
+                                        child: Text(
+                                          timeago.format(
+                                            DateTime.parse(widget
+                                                .post["date_added"]
+                                                .toString()),
+                                            locale: localization.currentLocale
+                                                        .localeIdentifier ==
+                                                    'ar'
+                                                ? "ar"
+                                                : localization.currentLocale
+                                                            .localeIdentifier ==
+                                                        'en'
+                                                    ? 'en_short'
+                                                    : localization.currentLocale
+                                                        .localeIdentifier,
+                                          ),
+                                          // textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                            // color: Colors.grey,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: (MediaQuery.sizeOf(context).width -
-                                              65) *
-                                          0.4,
-                                      child: Text(
-                                        timeago.format(
-                                          DateTime.parse(widget
-                                              .post["date_added"]
-                                              .toString()),
-                                          locale: localization.currentLocale
-                                                      .localeIdentifier ==
-                                                  'ar'
-                                              ? "ar"
-                                              : localization.currentLocale
-                                                          .localeIdentifier ==
-                                                      'en'
-                                                  ? 'en_short'
-                                                  : localization.currentLocale
-                                                      .localeIdentifier,
-                                        ),
-                                        // textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                          // color: Colors.grey,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           IconButton(
