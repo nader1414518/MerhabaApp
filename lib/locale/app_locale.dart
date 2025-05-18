@@ -88,8 +88,12 @@ mixin AppLocale {
   static const String remove_friend_label = "Remove Friend";
   static const String block_label = "Block";
   static const String no_data_found_label = "No data found";
+  static const String friend_requests_label = "Friend Requests";
+  static const String suggestions_label = "Suggestions";
 
   static const Map<String, dynamic> EN = {
+    suggestions_label: "Suggestions",
+    friend_requests_label: "Friend Requests",
     no_data_found_label: "No data found",
     block_label: "Block",
     add_friend_label: "Add Friend",
@@ -182,6 +186,8 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    suggestions_label: "الاقتراحات",
+    friend_requests_label: "طلبات الأصدقاء",
     no_data_found_label: "لا يوجد بيانات",
     block_label: "حظر",
     add_friend_label: "إضافة صديق",

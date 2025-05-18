@@ -12,6 +12,7 @@ import 'package:merhaba_app/providers/chat_provider.dart';
 import 'package:merhaba_app/providers/chats_provider.dart';
 import 'package:merhaba_app/providers/contact_search_provider.dart';
 import 'package:merhaba_app/providers/create_account_provider.dart';
+import 'package:merhaba_app/providers/friends_provider.dart';
 import 'package:merhaba_app/providers/home_screen_provider.dart';
 import 'package:merhaba_app/providers/location_viewer_provider.dart';
 import 'package:merhaba_app/providers/login_provider.dart';
@@ -141,6 +142,9 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (_) => PublicProfileProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => FriendsProvider(),
       ),
     ],
     child: const MyApp(),
