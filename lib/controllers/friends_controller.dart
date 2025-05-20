@@ -209,4 +209,39 @@ class FriendsController {
       };
     }
   }
+
+  static Future<List<Map<String, dynamic>>> getSuggestions() async {
+    try {
+      var friends = await getFriends();
+      var friendRequests = await getFriendRequests();
+
+      var allUsers = await Supabase.instance.client.from("users").select();
+
+      List<Map<String, dynamic>> list = [];
+      for (var user in allUsers) {
+        var isInFriends = friends
+            .where((element) => element["user_id"] == user["user_id"])
+            .isNotEmpty;
+
+        if (isInFriends) {
+          continue;
+        }
+
+        var isInFriendRequests = friendRequests
+            .where((element) => element["user_id"] == user["user_id"])
+            .isNotEmpty;
+
+        if (isInFriendRequests) {
+          continue;
+        }
+
+        list.add(user);
+      }
+
+      return list;
+    } catch (e) {
+      print(e.toString());
+      return [];
+    }
+  }
 }

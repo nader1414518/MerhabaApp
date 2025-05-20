@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
+import 'package:merhaba_app/providers/friends_provider.dart';
 import 'package:merhaba_app/providers/home_screen_provider.dart';
 import 'package:merhaba_app/providers/profile_tab_provider.dart';
 import 'package:merhaba_app/providers/timeline_provider.dart';
@@ -48,6 +49,15 @@ class HomeScreen extends StatelessWidget {
               );
 
               timeLineProvider.getData();
+            }
+
+            if (value == 1) {
+              final friendsProvider = Provider.of<FriendsProvider>(
+                context,
+                listen: false,
+              );
+
+              friendsProvider.getData();
             }
 
             if (value == 4) {
