@@ -212,10 +212,22 @@ class FriendsController {
 
   static Future<List<Map<String, dynamic>>> getSuggestions() async {
     try {
-      var friends = await getFriends();
-      var friendRequests = await getFriendRequests();
+      var uid = await secureStorage.read(
+        key: "uid",
+      );
 
-      var allUsers = await Supabase.instance.client.from("users").select();
+      if (uid == null) {
+        return [];
+      }
+
+      var friends = await getFriends();
+      var friendRequests =
+          await Supabase.instance.client.from("friends_requests").select();
+
+      var allUsers = await Supabase.instance.client
+          .from("users")
+          .select()
+          .neq("user_id", uid);
 
       List<Map<String, dynamic>> list = [];
       for (var user in allUsers) {
@@ -228,7 +240,11 @@ class FriendsController {
         }
 
         var isInFriendRequests = friendRequests
-            .where((element) => element["user_id"] == user["user_id"])
+            .where((element) =>
+                (element["user1_id"] == user["user_id"] &&
+                    element["user2_id"] == uid) ||
+                (element["user2_id"] == user["user_id"] &&
+                    element["user1_id"] == uid))
             .isNotEmpty;
 
         if (isInFriendRequests) {
