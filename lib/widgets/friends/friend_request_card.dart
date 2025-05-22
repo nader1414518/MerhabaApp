@@ -2,17 +2,21 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
+import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/friends_provider.dart';
 import 'package:merhaba_app/providers/post_provider.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
 import 'package:merhaba_app/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
-class FriendSuggestionCard extends StatelessWidget {
+class FriendRequestCard extends StatelessWidget {
+  final Map<String, dynamic> request;
   final Map<String, dynamic> user;
 
-  const FriendSuggestionCard({
+  const FriendRequestCard({
     super.key,
+    required this.request,
     required this.user,
   });
 
@@ -92,25 +96,38 @@ class FriendSuggestionCard extends StatelessWidget {
                   ),
                 ],
               ),
+              SizedBox(
+                width: (MediaQuery.sizeOf(context).width - 65) * 0.2,
+                child: Text(
+                  timeago.format(
+                    DateTime.parse(request["date_added"].toString()),
+                    locale: localization.currentLocale.localeIdentifier == 'ar'
+                        ? "ar"
+                        : localization.currentLocale.localeIdentifier == 'en'
+                            ? 'en_short'
+                            : localization.currentLocale.localeIdentifier,
+                  ),
+                  textAlign: TextAlign.end,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
           const SizedBox(
             height: 10,
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ElevatedButton.icon(
-                onPressed: () {
-                  final friendsProvider = Provider.of<FriendsProvider>(
-                    context,
-                    listen: false,
-                  );
-
-                  friendsProvider.addFriend(user["user_id"]);
-                },
+                onPressed: () {},
                 label: Text(
-                  AppLocale.add_friend_label.getString(
+                  AppLocale.confirm_label.getString(
                     context,
                   ),
                   style: const TextStyle(
@@ -130,7 +147,35 @@ class FriendSuggestionCard extends StatelessWidget {
                   ),
                 ),
                 icon: const Icon(
-                  Icons.add_circle_outline,
+                  Icons.check_circle_outline,
+                  size: 18,
+                  color: Colors.white,
+                ),
+              ),
+              ElevatedButton.icon(
+                onPressed: () {},
+                label: Text(
+                  AppLocale.delete_label.getString(
+                    context,
+                  ),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  elevation: 3,
+                  visualDensity: VisualDensity.compact,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      15,
+                    ),
+                  ),
+                ),
+                icon: const Icon(
+                  Icons.delete,
                   size: 18,
                   color: Colors.white,
                 ),

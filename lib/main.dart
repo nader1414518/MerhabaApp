@@ -48,6 +48,7 @@ final FlutterSecureStorage secureStorage = FlutterSecureStorage(
     accessibility: KeychainAccessibility.first_unlock,
   ),
 );
+GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -234,6 +235,7 @@ class MyAppState extends State<MyApp> {
       dark: ThemeData.dark(useMaterial3: true),
       initial: AdaptiveThemeMode.light,
       builder: (theme, darkTheme) => FluentApp(
+        navigatorKey: navigatorKey,
         title: 'Merhaba App',
         debugShowCheckedModeBanner: false,
         theme: theme == ThemeData.light(useMaterial3: true)

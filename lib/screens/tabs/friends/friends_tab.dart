@@ -4,6 +4,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/friends_provider.dart';
+import 'package:merhaba_app/widgets/friends/friend_request_card.dart';
 import 'package:merhaba_app/widgets/friends/friend_suggestion_card.dart';
 import 'package:provider/provider.dart';
 
@@ -180,7 +181,21 @@ class FriendsTab extends StatelessWidget {
                 ),
                 shrinkWrap: true,
                 physics: const BouncingScrollPhysics(),
-                children: [],
+                children: [
+                  ...friendsProvider.friendRequests.map(
+                    (request) => Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 5,
+                      ),
+                      child: FriendRequestCard(
+                        request: request,
+                        user: Map<String, dynamic>.from(
+                          request["user"] as Map,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             if (friendsProvider.tabIndex == 2) // friend requests
               ListView(
