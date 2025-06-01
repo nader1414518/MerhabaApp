@@ -9,6 +9,7 @@ import 'package:merhaba_app/utils/assets_utils.dart';
 import 'package:merhaba_app/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:fluent_ui/fluent_ui.dart' as fluent;
 
 class FriendRequestCard extends StatelessWidget {
   final Map<String, dynamic> request;
@@ -125,7 +126,14 @@ class FriendRequestCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  final friendsProvider = Provider.of<FriendsProvider>(
+                    context,
+                    listen: false,
+                  );
+
+                  friendsProvider.acceptFriendRequest(request["id"]);
+                },
                 label: Text(
                   AppLocale.confirm_label.getString(
                     context,
@@ -153,7 +161,95 @@ class FriendRequestCard extends StatelessWidget {
                 ),
               ),
               ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (ctx1) => fluent.ContentDialog(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            AppLocale.delete_friend_request_label.getString(
+                              context,
+                            ),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  Navigator.pop(ctx1);
+
+                                  final friendsProvider =
+                                      Provider.of<FriendsProvider>(
+                                    context,
+                                    listen: false,
+                                  );
+
+                                  friendsProvider
+                                      .deleteFriendRequest(request["id"]);
+                                },
+                                label: Text(
+                                  AppLocale.delete_label.getString(
+                                    ctx1,
+                                  ),
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  foregroundColor: Colors.white,
+                                  elevation: 3,
+                                  visualDensity: VisualDensity.compact,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      8,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  Navigator.pop(ctx1);
+                                },
+                                label: Text(
+                                  AppLocale.cancel_label.getString(
+                                    ctx1,
+                                  ),
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 3,
+                                  visualDensity: VisualDensity.compact,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      8,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
                 label: Text(
                   AppLocale.delete_label.getString(
                     context,

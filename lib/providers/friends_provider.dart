@@ -19,6 +19,19 @@ class FriendsProvider extends ChangeNotifier {
   List<Map<String, dynamic>> _friendRequests = [];
   List<Map<String, dynamic>> get friendRequests => _friendRequests;
 
+  List<Map<String, dynamic>> _friends = [];
+  List<Map<String, dynamic>> get friends => _friends;
+
+  setFriends(List<Map<String, dynamic>> value) {
+    _friends = value;
+    notifyListeners();
+  }
+
+  clearFriends() {
+    _friends.clear();
+    notifyListeners();
+  }
+
   setFriendRequests(List<Map<String, dynamic>> value) {
     _friendRequests = value;
     notifyListeners();
@@ -47,12 +60,10 @@ class FriendsProvider extends ChangeNotifier {
   setTabIndex(int value) {
     _tabIndex = value;
     if (_tabIndex == 0) {
-      // TODO: refresh friends
+      getFriends();
     } else if (_tabIndex == 1) {
-      // TODO: refresh friend requests
       getFriendRequests();
     } else if (_tabIndex == 2) {
-      // TODO: refresh suggestions
       getSuggestions();
     }
     notifyListeners();
@@ -93,6 +104,53 @@ class FriendsProvider extends ChangeNotifier {
     setIsLoading(false);
   }
 
+  Future<void> deleteFriendRequest(int requestId) async {
+    setIsLoading(true);
+
+    try {
+      var res = await FriendsController.deleteFriendRequest(requestId);
+
+      if (res["result"] == true) {
+        await getFriendRequests();
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+
+    setIsLoading(false);
+  }
+
+  Future<void> acceptFriendRequest(int requestId) async {
+    setIsLoading(true);
+
+    try {
+      var res = await FriendsController.acceptFriendRequest(requestId);
+
+      if (res["result"] == true) {
+        await getFriendRequests();
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+
+    setIsLoading(false);
+  }
+
+  Future<void> getFriends() async {
+    setIsLoading(true);
+
+    try {
+      var res = await FriendsController.getFriends();
+
+      setFriends(res);
+    } catch (e) {
+      print(e.toString());
+      clearFriends();
+    }
+
+    setIsLoading(false);
+  }
+
   Future<void> getFriendRequests() async {
     setIsLoading(true);
 
@@ -126,8 +184,9 @@ class FriendsProvider extends ChangeNotifier {
   Future<void> getData() async {
     setIsLoading(true);
     try {
-      await getSuggestions();
+      await getFriends();
       await getFriendRequests();
+      await getSuggestions();
     } catch (e) {
       print(e);
     }

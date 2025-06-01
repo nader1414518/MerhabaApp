@@ -92,8 +92,10 @@ mixin AppLocale {
   static const String suggestions_label = "Suggestions";
   static const String friend_request_sent_label = "Friend Request Sent";
   static const String delete_label = "Delete";
+  static const String delete_friend_request_label = "Delete Friend Request";
 
   static const Map<String, dynamic> EN = {
+    delete_friend_request_label: "Delete Friend Request",
     delete_label: "Delete",
     friend_request_sent_label: "Friend Request Sent",
     suggestions_label: "Suggestions",
@@ -190,6 +192,7 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    delete_friend_request_label: "حذف طلب الصداقة",
     delete_label: "حذف",
     friend_request_sent_label: "تم ارسال طلب الصداقة",
     suggestions_label: "الاقتراحات",
