@@ -142,6 +142,7 @@ class FriendsController {
       var friendRequestsRes = await Supabase.instance.client
           .from("friends_requests")
           .select()
+          .eq("status", "Pending")
           .eq("user2_id", uid);
 
       var users = await Supabase.instance.client.from("users").select();
@@ -245,6 +246,7 @@ class FriendsController {
                     element["user2_id"] == uid) ||
                 (element["user2_id"] == user["user_id"] &&
                     element["user1_id"] == uid))
+            // .where((element) => element["status"] == "Pending")
             .isNotEmpty;
 
         if (isInFriendRequests) {
@@ -258,6 +260,28 @@ class FriendsController {
     } catch (e) {
       print(e.toString());
       return [];
+    }
+  }
+
+  static Future<Map<String, dynamic>> deleteFriendRequest(
+    int requestId,
+  ) async {
+    try {
+      await Supabase.instance.client
+          .from("friends_requests")
+          .delete()
+          .eq("id", requestId);
+
+      return {
+        "result": true,
+        "message": "Friend request deleted successfully",
+      };
+    } catch (e) {
+      print(e.toString());
+      return {
+        "result": false,
+        "message": e.toString(),
+      };
     }
   }
 }
