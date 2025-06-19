@@ -52,6 +52,10 @@ class PublicProfileScreen extends StatelessWidget {
                     : ListView(
                         shrinkWrap: true,
                         physics: const ClampingScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 10,
+                        ),
                         children: [
                           Card(
                             child: Column(
@@ -137,6 +141,47 @@ class PublicProfileScreen extends StatelessWidget {
                             height: 20,
                           ),
                           InkWell(
+                            onTap: () {
+                              // TODO: Share profile
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.blueGrey.withOpacity(
+                                  0.25,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 10,
+                              ),
+                              child: const Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    AppLocale.share_label,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.share,
+                                    size: 15,
+                                    color: Colors.blue,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              // TODO: Add friend / Remove friend
+                            },
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.blueGrey.withOpacity(
@@ -168,9 +213,12 @@ class PublicProfileScreen extends StatelessWidget {
                                   ),
                                   Icon(
                                     publicProfileProvider.isFriend
-                                        ? fluent.FluentIcons.remove
-                                        : fluent.FluentIcons.add,
+                                        ? Icons.remove_circle_outline
+                                        : Icons.add_circle_outline,
                                     size: 15,
+                                    color: publicProfileProvider.isFriend
+                                        ? Colors.red
+                                        : Colors.green,
                                   ),
                                 ],
                               ),
@@ -180,6 +228,9 @@ class PublicProfileScreen extends StatelessWidget {
                             height: 5,
                           ),
                           InkWell(
+                            onTap: () {
+                              // TODO: Block user
+                            },
                             child: Container(
                               decoration: BoxDecoration(
                                 color:
