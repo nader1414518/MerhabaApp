@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:merhaba_app/controllers/friends_controller.dart';
 import 'package:merhaba_app/controllers/public_profile_controller.dart';
 
 class PublicProfileProvider with ChangeNotifier {
@@ -40,6 +41,17 @@ class PublicProfileProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> checkIsFriend() async {
+    try {
+      var res = await FriendsController.isInFriend(uid);
+
+      setIsFriend(res);
+    } catch (e) {
+      print(e.toString());
+      setIsFriend(false);
+    }
+  }
+
   Future<void> getUserProfile() async {
     try {
       var res = await PublicProfileController.getPublicProfile(uid);
@@ -61,6 +73,7 @@ class PublicProfileProvider with ChangeNotifier {
 
     try {
       await getUserProfile();
+      await checkIsFriend();
     } catch (e) {
       print(e.toString());
     }

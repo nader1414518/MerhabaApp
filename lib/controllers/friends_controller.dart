@@ -284,4 +284,30 @@ class FriendsController {
       };
     }
   }
+
+  static Future<bool> isInFriend(String userId) async {
+    try {
+      var uid = await secureStorage.read(
+        key: "uid",
+      );
+
+      if (uid == null) {
+        return false;
+      }
+
+      var friends = await getFriends();
+
+      // print(friends);
+
+      return friends
+          .where((element) =>
+              (element["user1_id"] == userId ||
+                  element["user2_id"] == userId) &&
+              (element["user1_id"] == uid || element["user2_id"] == uid))
+          .isNotEmpty;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
 }
