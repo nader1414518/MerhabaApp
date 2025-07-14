@@ -310,4 +310,146 @@ class FriendsController {
       return false;
     }
   }
+
+  static Future<Map<String, dynamic>> blockUser(String userId) async {
+    try {
+      var uid = await secureStorage.read(
+        key: "uid",
+      );
+
+      if (uid == null) {
+        return {
+          "result": false,
+          "message": "Please login again!!",
+        };
+      }
+
+      var blockedUsers = await getBlockList();
+
+      if (blockedUsers.any((element) => element["user_id"] == userId)) {
+        return {
+          "result": false,
+          "message": "User is already blocked",
+        };
+      }
+
+      await Supabase.instance.client.from("blocked_users").insert({
+        "blocking_user_id": uid,
+        "blocked_user_id": userId,
+        "date_added": DateTime.now().toIso8601String(),
+        "added_by": uid,
+        "date_updated": DateTime.now().toIso8601String(),
+        "updated_by": uid,
+        "active": true,
+      });
+
+      return {
+        "result": true,
+        "message": "User blocked successfully",
+      };
+    } catch (e) {
+      print(e.toString());
+      return {
+        "result": false,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> unblockUser(String userId) async {
+    try {
+      var uid = await secureStorage.read(
+        key: "uid",
+      );
+
+      if (uid == null) {
+        return {
+          "result": false,
+          "message": "Please login again!!",
+        };
+      }
+
+      var blockedUsers = await getBlockList();
+
+      if (!blockedUsers.any((element) => element["user_id"] == userId)) {
+        return {
+          "result": false,
+          "message": "User is not blocked",
+        };
+      }
+
+      await Supabase.instance.client
+          .from("blocked_users")
+          .update({
+            "active": false,
+            "date_updated": DateTime.now().toIso8601String(),
+            "updated_by": uid,
+          })
+          .eq("blocking_user_id", uid)
+          .eq("blocked_user_id", userId)
+          .eq("active", true);
+
+      return {
+        "result": true,
+        "message": "User unblocked successfully",
+      };
+    } catch (e) {
+      print(e.toString());
+      return {
+        "result": false,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  static Future<bool> isBlocked(String userId) async {
+    try {
+      var uid = await secureStorage.read(
+        key: "uid",
+      );
+
+      if (uid == null) {
+        return false;
+      }
+
+      var blockedUsers = await getBlockList();
+
+      return blockedUsers.any((element) => element["user_id"] == userId);
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> getBlockList() async {
+    try {
+      var uid = await secureStorage.read(
+        key: "uid",
+      );
+
+      if (uid == null) {
+        return [];
+      }
+
+      var blockListRes = await Supabase.instance.client
+          .from("blocked_users")
+          .select()
+          .eq("blocking_user_id", uid)
+          .eq("active", true);
+
+      List<String> blockList = blockListRes
+          .map((element) => element["blocked_user_id"].toString())
+          .toList();
+
+      var users = await Supabase.instance.client
+          .from("users")
+          .select()
+          .inFilter("user_id", blockList);
+
+      return users;
+    } catch (e) {
+      print(e.toString());
+      return [];
+    }
+  }
 }
