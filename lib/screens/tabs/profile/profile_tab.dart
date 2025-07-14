@@ -305,7 +305,12 @@ class ProfileTab extends StatelessWidget {
                     ],
                   ),
                 ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(
+                    context,
+                    rootNavigator: true,
+                  ).pushNamed("/account_settings");
+                },
               ),
               const SizedBox(
                 height: 5,

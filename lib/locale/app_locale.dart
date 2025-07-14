@@ -95,8 +95,10 @@ mixin AppLocale {
   static const String delete_friend_request_label = "Delete Friend Request";
   static const String unfriend_label = "Unfriend";
   static const String unfriend_successfully_label = "Unfriend Successfully";
+  static const String block_list_label = "Block List";
 
   static const Map<String, dynamic> EN = {
+    block_list_label: "Block List",
     unfriend_label: "Unfriend",
     unfriend_successfully_label: "Unfriend Successfully",
     delete_friend_request_label: "Delete Friend Request",
@@ -196,6 +198,7 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    block_list_label: "قائمة الحظر",
     unfriend_label: "إزالة الصديق",
     unfriend_successfully_label: "تم إزالة الصديق بنجاح",
     delete_friend_request_label: "حذف طلب الصداقة",
