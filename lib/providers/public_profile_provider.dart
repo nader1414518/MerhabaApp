@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:merhaba_app/controllers/friends_controller.dart';
 import 'package:merhaba_app/controllers/public_profile_controller.dart';
+import 'package:merhaba_app/main.dart';
 
 class PublicProfileProvider with ChangeNotifier {
   bool _isLoading = false;
@@ -72,8 +73,12 @@ class PublicProfileProvider with ChangeNotifier {
     setIsLoading(true);
 
     try {
-      await getUserProfile();
-      await checkIsFriend();
+      if (!(await FriendsController.isBlocked(uid))) {
+        await getUserProfile();
+        await checkIsFriend();
+      } else {
+        setCurrentProfile({});
+      }
     } catch (e) {
       print(e.toString());
     }

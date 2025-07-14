@@ -94,6 +94,8 @@ class FriendsController {
         return [];
       }
 
+      var blockedUsers = await getBlockList();
+
       var friendsRes1 = await Supabase.instance.client
           .from("friends")
           .select()
@@ -106,7 +108,10 @@ class FriendsController {
 
       var users = await Supabase.instance.client.from("users").select();
 
-      friendsRes1 = friendsRes1.map((element) {
+      friendsRes1 = friendsRes1
+          .where((element) => !blockedUsers.any(
+              (blockedUser) => blockedUser["user_id"] == element["user2_id"]))
+          .map((element) {
         return {
           ...element,
           "user": users
@@ -114,7 +119,13 @@ class FriendsController {
         };
       }).toList();
 
-      friendsRes2 = friendsRes2.map((element) {
+      friendsRes2 = friendsRes2
+          .where(
+        (element) => !blockedUsers.any(
+          (blockedUser) => blockedUser["user_id"] == element["user1_id"],
+        ),
+      )
+          .map((element) {
         return {
           ...element,
           "user": users
@@ -139,6 +150,8 @@ class FriendsController {
         return [];
       }
 
+      var blockedUsers = await getBlockList();
+
       var friendRequestsRes = await Supabase.instance.client
           .from("friends_requests")
           .select()
@@ -147,7 +160,13 @@ class FriendsController {
 
       var users = await Supabase.instance.client.from("users").select();
 
-      friendRequestsRes = friendRequestsRes.map((element) {
+      friendRequestsRes = friendRequestsRes
+          .where(
+        (element) => !blockedUsers.any(
+          (blockedUser) => blockedUser["user_id"] == element["user1_id"],
+        ),
+      )
+          .map((element) {
         return {
           ...element,
           "user": users
@@ -221,6 +240,8 @@ class FriendsController {
         return [];
       }
 
+      var blockedUsers = await getBlockList();
+
       var friends = await getFriends();
       var friendRequests =
           await Supabase.instance.client.from("friends_requests").select();
@@ -250,6 +271,11 @@ class FriendsController {
             .isNotEmpty;
 
         if (isInFriendRequests) {
+          continue;
+        }
+
+        if (blockedUsers
+            .any((element) => element["user_id"] == user["user_id"])) {
           continue;
         }
 

@@ -302,7 +302,74 @@ class PublicProfileScreen extends StatelessWidget {
                         ),
                         InkWell(
                           onTap: () {
-                            // TODO: Block user
+                            showDialog(
+                              context: context,
+                              builder: (ctx1) => AlertDialog(
+                                title: Text(
+                                  AppLocale.block_label.getString(
+                                    context,
+                                  ),
+                                ),
+                                actions: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(ctx1).pop();
+
+                                      final friendsProvider =
+                                          Provider.of<FriendsProvider>(
+                                        context,
+                                        listen: false,
+                                      );
+
+                                      friendsProvider.blockUser(
+                                        publicProfileProvider
+                                            .currentProfile["user_id"],
+                                      );
+
+                                      Navigator.of(context, rootNavigator: true)
+                                          .pop();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white,
+                                      visualDensity: VisualDensity.compact,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      AppLocale.confirm_label.getString(
+                                        ctx1,
+                                      ),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(ctx1).pop();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      visualDensity: VisualDensity.compact,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      AppLocale.cancel_label.getString(
+                                        ctx1,
+                                      ),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
                           },
                           child: Container(
                             decoration: BoxDecoration(
