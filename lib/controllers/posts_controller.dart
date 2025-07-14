@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:merhaba_app/controllers/auth_controller.dart';
+import 'package:merhaba_app/controllers/friends_controller.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:path/path.dart' as p;
 
@@ -10,7 +11,15 @@ class PostsController {
     try {
       var res = await Supabase.instance.client.from("posts").select();
 
-      return res;
+      var blockedUsers = await FriendsController.getBlockList();
+
+      return res
+          .where(
+            (element) => !blockedUsers.any(
+              (blockedUser) => blockedUser["user_id"] == element["user_id"],
+            ),
+          )
+          .toList();
     } catch (e) {
       print(e.toString());
       return [];

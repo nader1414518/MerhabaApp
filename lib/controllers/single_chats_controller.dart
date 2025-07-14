@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
+import 'package:merhaba_app/controllers/friends_controller.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/post_provider.dart';
@@ -127,9 +128,19 @@ class SingleChatsController {
           .select()
           .eq("user2_id", uid);
 
+      var blockedUsers = await FriendsController.getBlockList();
+
       return [
-        ...user1Res,
-        ...user2Res,
+        ...user1Res.where(
+          (element) => !blockedUsers.any(
+            (blockedUser) => blockedUser["user_id"] == element["user2_id"],
+          ),
+        ),
+        ...user2Res.where(
+          (element) => !blockedUsers.any(
+            (blockedUser) => blockedUser["user_id"] == element["user1_id"],
+          ),
+        ),
       ];
     } catch (e) {
       print(e.toString());
