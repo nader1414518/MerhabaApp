@@ -3,6 +3,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/block_list_provider.dart';
+import 'package:merhaba_app/widgets/friends/blocked_user_card.dart';
 import 'package:provider/provider.dart';
 
 class BlockListScreen extends StatelessWidget {
@@ -30,15 +31,44 @@ class BlockListScreen extends StatelessWidget {
             ),
           ),
         ),
-        body: ListView(
-          padding: const EdgeInsets.symmetric(
-            vertical: 20,
-            horizontal: 20,
-          ),
-          shrinkWrap: true,
-          physics: const ClampingScrollPhysics(),
-          children: [],
-        ),
+        body: blockListProvider.isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : blockListProvider.blockList.isEmpty
+                ? Center(
+                    child: Text(
+                      AppLocale.no_data_found_label.getString(
+                        context,
+                      ),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  )
+                : ListView(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 20,
+                      horizontal: 20,
+                    ),
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    children: [
+                      ...blockListProvider.blockList.map(
+                        (element) => Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: 5,
+                          ),
+                          child: BlockedUserCard(
+                            user: element,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
       ),
     );
   }

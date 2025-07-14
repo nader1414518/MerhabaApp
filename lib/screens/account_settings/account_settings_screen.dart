@@ -4,6 +4,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/account_settings_provider.dart';
+import 'package:merhaba_app/providers/block_list_provider.dart';
 import 'package:provider/provider.dart';
 
 class AccountSettingsScreen extends StatelessWidget {
@@ -41,6 +42,13 @@ class AccountSettingsScreen extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
+                final blockListProvider = Provider.of<BlockListProvider>(
+                  context,
+                  listen: false,
+                );
+
+                blockListProvider.getData();
+
                 Navigator.of(
                   context,
                   rootNavigator: true,
