@@ -104,6 +104,76 @@ class FriendsProvider extends ChangeNotifier {
     setIsLoading(false);
   }
 
+  Future<void> unFriend(String otherUserId) async {
+    setIsLoading(true);
+
+    try {
+      var res = await FriendsController.unFriend(otherUserId);
+
+      if (res["result"] == true) {
+        Fluttertoast.showToast(
+          msg: AppLocale.unfriend_successfully_label.getString(
+            navigatorKey.currentContext!,
+          ),
+        );
+
+        await getFriends();
+        await getSuggestions();
+      } else {
+        Fluttertoast.showToast(msg: res["message"]);
+      }
+    } catch (e) {
+      print(e.toString());
+      Fluttertoast.showToast(msg: e.toString());
+    }
+
+    setIsLoading(false);
+  }
+
+  Future<void> blockUser(String otherUserId) async {
+    setIsLoading(true);
+
+    try {
+      var res = await FriendsController.blockUser(otherUserId);
+
+      if (res["result"] == true) {
+        Fluttertoast.showToast(msg: res["message"]);
+
+        await getFriends();
+        await getSuggestions();
+        await getFriendRequests();
+      } else {
+        Fluttertoast.showToast(msg: res["message"]);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+
+    setIsLoading(false);
+  }
+
+  Future<void> unblockUser(String otherUserId) async {
+    setIsLoading(true);
+
+    try {
+      var res = await FriendsController.unblockUser(otherUserId);
+
+      if (res["result"] == true) {
+        Fluttertoast.showToast(msg: res["message"]);
+
+        await getFriends();
+        await getSuggestions();
+        await getFriendRequests();
+      } else {
+        Fluttertoast.showToast(msg: res["message"]);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+
+    setIsLoading(false);
+  }
+
   Future<void> deleteFriendRequest(int requestId) async {
     setIsLoading(true);
 

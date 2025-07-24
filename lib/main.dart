@@ -7,7 +7,9 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:merhaba_app/firebase_options.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
+import 'package:merhaba_app/providers/account_settings_provider.dart';
 import 'package:merhaba_app/providers/app_settings_provider.dart';
+import 'package:merhaba_app/providers/block_list_provider.dart';
 import 'package:merhaba_app/providers/chat_provider.dart';
 import 'package:merhaba_app/providers/chats_provider.dart';
 import 'package:merhaba_app/providers/contact_search_provider.dart';
@@ -21,6 +23,8 @@ import 'package:merhaba_app/providers/post_provider.dart';
 import 'package:merhaba_app/providers/profile_tab_provider.dart';
 import 'package:merhaba_app/providers/public_profile_provider.dart';
 import 'package:merhaba_app/providers/timeline_provider.dart';
+import 'package:merhaba_app/screens/account_settings/account_settings_screen.dart';
+import 'package:merhaba_app/screens/account_settings/block_list_screen.dart';
 import 'package:merhaba_app/screens/authentication/create_account_screen.dart';
 import 'package:merhaba_app/screens/authentication/login_screen.dart';
 import 'package:merhaba_app/screens/chats/chat_screen.dart';
@@ -147,6 +151,12 @@ void main() async {
       ChangeNotifierProvider(
         create: (_) => FriendsProvider(),
       ),
+      ChangeNotifierProvider(
+        create: (_) => AccountSettingsProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => BlockListProvider(),
+      ),
     ],
     child: const MyApp(),
   ));
@@ -270,6 +280,8 @@ class MyAppState extends State<MyApp> {
           "/contact_search": (context) => const ContactSearchScreen(),
           "/chat": (context) => const ChatScreen(),
           "/public_profile": (context) => const PublicProfileScreen(),
+          "/account_settings": (context) => const AccountSettingsScreen(),
+          "/block_list": (context) => const BlockListScreen(),
         },
       ),
     );

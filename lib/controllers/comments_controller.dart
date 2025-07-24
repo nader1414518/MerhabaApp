@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:merhaba_app/controllers/auth_controller.dart';
+import 'package:merhaba_app/controllers/friends_controller.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:path/path.dart' as p;
@@ -76,7 +77,15 @@ class CommentsController {
           .eq("post_id", postId)
           .eq("active", true);
 
-      return res;
+      var blockedUsers = await FriendsController.getBlockList();
+
+      return res
+          .where(
+            (element) => !blockedUsers.any(
+              (blockedUser) => blockedUser["user_id"] == element["user_id"],
+            ),
+          )
+          .toList();
     } catch (e) {
       print(e.toString());
       return [];
