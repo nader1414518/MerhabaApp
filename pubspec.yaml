@@ -40,6 +40,7 @@ dependencies:
   file_picker: ^10.1.2
   open_filex: ^4.7.0
   flutter_sound: ^9.28.0
+  tiktoklikescroller: ^0.2.8
 
   cupertino_icons: ^1.0.8
   supabase_flutter: ^2.8.2

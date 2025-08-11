@@ -97,8 +97,10 @@ mixin AppLocale {
   static const String unfriend_successfully_label = "Unfriend Successfully";
   static const String block_list_label = "Block List";
   static const String unblock_label = "Unblock";
+  static const String no_videos_found_label = "No videos found";
 
   static const Map<String, dynamic> EN = {
+    no_videos_found_label: "No videos found",
     unblock_label: "Unblock",
     block_list_label: "Block List",
     unfriend_label: "Unfriend",
@@ -200,6 +202,7 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    no_videos_found_label: "لا يوجد فيديوهات",
     unblock_label: "الغاء الحظر",
     block_list_label: "قائمة الحظر",
     unfriend_label: "إزالة الصديق",
