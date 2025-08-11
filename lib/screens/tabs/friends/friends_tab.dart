@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
@@ -24,12 +25,25 @@ class FriendsTab extends StatelessWidget {
           : TextDirection.ltr,
       child: Scaffold(
         appBar: AppBar(
-          centerTitle: true,
+          centerTitle: false,
           title: Text(
             AppLocale.friends_label.getString(
               context,
             ),
-          ),
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          )
+              .animate(
+                onPlay: (controller) => controller.repeat(),
+              )
+              .shimmer(duration: 3000.ms, color: const Color(0xFF80DDFF))
+              .animate(
+                  // onPlay: (controller) => controller.repeat(),
+                  ) // this wraps the previous Animate in another Animate
+              .fadeIn(duration: 1200.ms, curve: Curves.easeOutQuad)
+              .slide(),
         ),
         body: ListView(
           padding: const EdgeInsets.symmetric(
