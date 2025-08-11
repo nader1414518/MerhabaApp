@@ -8,6 +8,7 @@ import 'package:merhaba_app/providers/friends_provider.dart';
 import 'package:merhaba_app/providers/home_screen_provider.dart';
 import 'package:merhaba_app/providers/profile_tab_provider.dart';
 import 'package:merhaba_app/providers/timeline_provider.dart';
+import 'package:merhaba_app/providers/videos_provider.dart';
 import 'package:merhaba_app/screens/tabs/friends/friends_tab.dart';
 import 'package:merhaba_app/screens/tabs/home/home_tab.dart';
 import 'package:merhaba_app/screens/tabs/notifications/notifications_tab.dart';
@@ -58,6 +59,15 @@ class HomeScreen extends StatelessWidget {
               );
 
               friendsProvider.getData();
+            }
+
+            if (value == 2) {
+              final videosProvider = Provider.of<VideosProvider>(
+                context,
+                listen: false,
+              );
+
+              videosProvider.getData();
             }
 
             if (value == 4) {

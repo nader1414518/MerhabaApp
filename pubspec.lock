@@ -1394,6 +1394,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.2"
+  tiktoklikescroller:
+    dependency: "direct main"
+    description:
+      name: tiktoklikescroller
+      sha256: "75e323b067b5f771f6a79f7f0d43c429065c115232a73264bf11c0f54ca13c85"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.8"
   timeago:
     dependency: "direct main"
     description:
