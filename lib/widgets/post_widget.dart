@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flick_video_player/flick_video_player.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -17,8 +16,8 @@ import 'package:merhaba_app/screens/common/photo_viewer_screen.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
 import 'package:merhaba_app/utils/globals.dart';
 import 'package:merhaba_app/widgets/text_widget.dart';
+import 'package:merhaba_app/widgets/video_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:video_player/video_player.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class PostWidget extends StatefulWidget {
@@ -367,22 +366,12 @@ class _PostWidgetState extends State<PostWidget> {
                                                 ),
                                               )
                                             : Container(
-                                                child: FlickVideoPlayer(
-                                                  flickManager: FlickManager(
-                                                    autoPlay: false,
-                                                    videoPlayerController:
-                                                        VideoPlayerController
-                                                            .networkUrl(
-                                                      Uri.parse(
-                                                        item["url"].toString(),
-                                                      ),
-                                                      videoPlayerOptions:
-                                                          VideoPlayerOptions(
-                                                        allowBackgroundPlayback:
-                                                            false,
-                                                      ),
-                                                    ),
-                                                  ),
+                                                child: VideoWidget(
+                                                  url: item["url"].toString(),
+                                                  autoPlay: false,
+                                                  showControls: true,
+                                                  compactMode:
+                                                      true, // Enable compact mode for posts
                                                 ),
                                               ),
                                       )

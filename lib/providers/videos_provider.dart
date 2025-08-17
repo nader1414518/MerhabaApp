@@ -12,13 +12,18 @@ class VideosProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
 
   setIsLoading(bool value) {
-    _isLoading = value;
-    notifyListeners();
+    if (_isLoading != value) {
+      _isLoading = value;
+      notifyListeners();
+    }
   }
 
   setReels(List<Map<String, dynamic>> value) {
-    _reels = value;
-    notifyListeners();
+    // Only notify if the reels actually changed
+    if (_reels != value) {
+      _reels = value;
+      notifyListeners();
+    }
   }
 
   addToReels(Map<String, dynamic> value) {
@@ -27,19 +32,21 @@ class VideosProvider with ChangeNotifier {
   }
 
   removeFromReels(Map<String, dynamic> value) {
-    _reels.remove(value);
-    notifyListeners();
+    if (_reels.remove(value)) {
+      notifyListeners();
+    }
   }
 
   clearReels() {
-    _reels = [];
-    notifyListeners();
+    if (_reels.isNotEmpty) {
+      _reels = [];
+      notifyListeners();
+    }
   }
 
   Future<void> getReels() async {
     try {
       var res = await ReelsController.getReels();
-
       setReels(res);
     } catch (e) {
       print(e.toString());
