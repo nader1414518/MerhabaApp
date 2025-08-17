@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,9 +14,9 @@ import 'package:merhaba_app/providers/location_viewer_provider.dart';
 import 'package:merhaba_app/providers/new_post_provider.dart';
 import 'package:merhaba_app/providers/profile_tab_provider.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
+import 'package:merhaba_app/widgets/video_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
-import 'package:video_player/video_player.dart';
 
 class NewPostScreen extends StatelessWidget {
   final CarouselSliderController _controller = CarouselSliderController();
@@ -284,16 +283,12 @@ class NewPostScreen extends StatelessWidget {
                                               ),
                                             )
                                           : Container(
-                                              child: FlickVideoPlayer(
-                                                flickManager: FlickManager(
-                                                  videoPlayerController:
-                                                      VideoPlayerController
-                                                          .networkUrl(
-                                                    Uri.parse(
-                                                      item["url"].toString(),
-                                                    ),
-                                                  ),
-                                                ),
+                                              child: VideoWidget(
+                                                url: item["url"].toString(),
+                                                autoPlay: false,
+                                                showControls: true,
+                                                compactMode:
+                                                    true, // Enable compact mode for new post preview
                                               ),
                                             ),
                                     )

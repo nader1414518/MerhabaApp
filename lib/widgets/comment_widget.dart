@@ -3,17 +3,16 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/public_profile_provider.dart';
 import 'package:merhaba_app/screens/common/photo_viewer_screen.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
 import 'package:merhaba_app/widgets/text_widget.dart';
+import 'package:merhaba_app/widgets/video_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_localization/flutter_localization.dart';
-import 'package:video_player/video_player.dart';
 
 class CommentWidget extends StatelessWidget {
   Map<String, dynamic> comment = {};
@@ -235,19 +234,12 @@ class CommentWidget extends StatelessWidget {
                     width: (MediaQuery.sizeOf(context).width - 60) * 0.6 - 10,
                     height: (MediaQuery.sizeOf(context).width - 60) * 0.6 - 10,
                     child: ClipRRect(
-                      child: FlickVideoPlayer(
-                        flickManager: FlickManager(
-                          autoPlay: false,
-                          videoPlayerController:
-                              VideoPlayerController.networkUrl(
-                            Uri.parse(
-                              parsedContent["media"]["url"].toString(),
-                            ),
-                            videoPlayerOptions: VideoPlayerOptions(
-                              allowBackgroundPlayback: false,
-                            ),
-                          ),
-                        ),
+                      borderRadius: BorderRadius.circular(15),
+                      child: VideoWidget(
+                        url: parsedContent["media"]["url"].toString(),
+                        autoPlay: false,
+                        showControls: true,
+                        compactMode: true, // Enable compact mode for comments
                       ),
                     ),
                   ),

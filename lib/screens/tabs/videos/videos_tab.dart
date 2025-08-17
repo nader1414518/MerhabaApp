@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flick_video_player/flick_video_player.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -9,8 +10,11 @@ import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/app_settings_provider.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:merhaba_app/providers/videos_provider.dart';
+import 'package:merhaba_app/utils/video_cache_manager.dart';
+import 'package:merhaba_app/widgets/video_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:tiktoklikescroller/tiktoklikescroller.dart';
+import 'package:video_player/video_player.dart';
 
 class VideosTab extends StatefulWidget {
   const VideosTab({super.key});
@@ -21,23 +25,27 @@ class VideosTab extends StatefulWidget {
 
 class _VideosTabState extends State<VideosTab> {
   final controller = Controller();
+  final VideoCacheManager _cacheManager = VideoCacheManager();
 
   @override
   void initState() {
     super.initState();
 
     controller.addListener((event) {
-      print(event.direction);
-      print(event.success);
+      print(
+          'Scroll event - direction: ${event.direction}, success: ${event.success}');
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-    final videosProvider = Provider.of<VideosProvider>(
-      context,
-    );
+  void dispose() {
+    // Clean up video cache when leaving the tab
+    _cacheManager.disposeAll();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Directionality(
       textDirection: localization.currentLocale.localeIdentifier == "ar"
           ? TextDirection.rtl
@@ -92,7 +100,9 @@ class _VideosTabState extends State<VideosTab> {
                               );
 
                               if (res != null) {
-                                videosProvider.uploadReel(
+                                Provider.of<VideosProvider>(context,
+                                        listen: false)
+                                    .uploadReel(
                                   File(
                                     res.path,
                                   ),
@@ -111,7 +121,9 @@ class _VideosTabState extends State<VideosTab> {
                               );
 
                               if (res != null) {
-                                videosProvider.uploadReel(
+                                Provider.of<VideosProvider>(context,
+                                        listen: false)
+                                    .uploadReel(
                                   File(
                                     res.path,
                                   ),
@@ -126,40 +138,55 @@ class _VideosTabState extends State<VideosTab> {
             ),
           ],
         ),
-        body: videosProvider.isLoading
-            ? const Center(
+        body: Consumer<VideosProvider>(
+          builder: (context, videosProvider, child) {
+            if (videosProvider.isLoading) {
+              return const Center(
                 child: CircularProgressIndicator(),
-              )
-            : videosProvider.reels.isEmpty
-                ? Center(
-                    child: Text(
-                      AppLocale.no_videos_found_label.getString(
-                        context,
-                      ),
-                    ),
-                  )
-                : TikTokStyleFullPageScroller(
-                    contentSize: videosProvider.reels.length,
-                    swipePositionThreshold: 0.2,
-                    // ^ the fraction of the screen needed to scroll
-                    swipeVelocityThreshold: 2000,
-                    // ^ the velocity threshold for smaller scrolls
-                    animationDuration: const Duration(milliseconds: 400),
-                    // ^ how long the animation will take
-                    controller: controller,
-                    // ^ registering our own function to listen to page changes
-                    builder: (BuildContext context, int index) {
-                      return Center(
-                        child: Text(
-                          '$index',
-                          style: const TextStyle(
-                            fontSize: 48,
-                            color: Colors.white,
-                          ),
-                        ),
-                      );
-                    },
+              );
+            }
+
+            if (videosProvider.reels.isEmpty) {
+              return Center(
+                child: Text(
+                  AppLocale.no_videos_found_label.getString(
+                    context,
                   ),
+                ),
+              );
+            }
+
+            return TikTokStyleFullPageScroller(
+              contentSize: videosProvider.reels.length,
+              swipePositionThreshold: 0.2,
+              // ^ the fraction of the screen needed to scroll
+              swipeVelocityThreshold: 2000,
+              // ^ the velocity threshold for smaller scrolls
+              animationDuration: const Duration(milliseconds: 400),
+              // ^ how long the animation will take
+              controller: controller,
+              // ^ registering our own function to listen to page changes
+              builder: (BuildContext context, int index) {
+                final videoUrl =
+                    videosProvider.reels[index]["reel_url"].toString();
+                final videoId = videosProvider.reels[index]["id"] ?? index;
+
+                // Preload next video for smooth scrolling
+                if (index < videosProvider.reels.length - 1) {
+                  final nextUrl =
+                      videosProvider.reels[index + 1]["reel_url"].toString();
+                  _cacheManager.getOrCreateController(nextUrl);
+                }
+
+                return VideoWidget(
+                  key: ValueKey('video_$videoId'),
+                  url: videoUrl,
+                  autoPlay: true, // Let each video autoplay when visible
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
