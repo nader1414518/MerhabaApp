@@ -98,8 +98,22 @@ mixin AppLocale {
   static const String block_list_label = "Block List";
   static const String unblock_label = "Unblock";
   static const String no_videos_found_label = "No videos found";
+  static const String new_story_label = "New Story";
+  static const String story_label = "Story";
+  static const String story_duration_label = "Story Duration";
+  static const String days_label = "Days";
+  static const String choose_video_label = "Choose Video";
+  static const String choose_photo_label = "Choose Photo";
+  static const String choose_voice_label = "Choose Voice";
 
   static const Map<String, dynamic> EN = {
+    new_story_label: "New Story",
+    story_label: "Story",
+    story_duration_label: "Story Duration",
+    days_label: "Days",
+    choose_video_label: "Choose Video",
+    choose_photo_label: "Choose Photo",
+    choose_voice_label: "Choose Voice",
     no_videos_found_label: "No videos found",
     unblock_label: "Unblock",
     block_list_label: "Block List",
@@ -202,6 +216,13 @@ mixin AppLocale {
   };
 
   static const Map<String, dynamic> AR = {
+    new_story_label: "القصة",
+    story_label: "القصة",
+    story_duration_label: "مدة القصة",
+    days_label: "أيام",
+    choose_video_label: "اختار فيديو",
+    choose_photo_label: "اختار صورة",
+    choose_voice_label: "اختار صوت",
     no_videos_found_label: "لا يوجد فيديوهات",
     unblock_label: "الغاء الحظر",
     block_list_label: "قائمة الحظر",

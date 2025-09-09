@@ -7,6 +7,8 @@ import 'package:merhaba_app/locale/app_locale.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/app_settings_provider.dart';
 import 'package:merhaba_app/providers/login_provider.dart';
+import 'package:merhaba_app/providers/profile_tab_provider.dart';
+import 'package:merhaba_app/providers/stories_provider.dart';
 import 'package:merhaba_app/providers/timeline_provider.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
 import 'package:provider/provider.dart';
@@ -111,6 +113,22 @@ class LoginScreen extends StatelessWidget {
                               );
 
                               timelineProvider.getData();
+
+                              final storiesProvider =
+                                  Provider.of<StoriesProvider>(
+                                context,
+                                listen: false,
+                              );
+
+                              storiesProvider.getData();
+
+                              final profileTabProvider =
+                                  Provider.of<ProfileTabProvider>(
+                                context,
+                                listen: false,
+                              );
+
+                              profileTabProvider.getData();
 
                               Navigator.of(context).pushNamed("/home");
                             } else {
