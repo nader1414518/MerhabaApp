@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:merhaba_app/controllers/posts_controller.dart';
 import 'package:merhaba_app/locale/app_locale.dart';
+import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/app_settings_provider.dart';
+import 'package:merhaba_app/providers/stories_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:swipe_refresh/swipe_refresh.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
@@ -100,6 +103,11 @@ class TimelineProvider with ChangeNotifier {
 
   Future<void> onRefresh() async {
     await getPosts();
+    final storiesProvider = Provider.of<StoriesProvider>(
+      navigatorKey.currentContext!,
+      listen: false,
+    );
+    await storiesProvider.getStories();
 
     /// When all needed is done change state.
     _swipeController.sink.add(SwipeRefreshState.hidden);

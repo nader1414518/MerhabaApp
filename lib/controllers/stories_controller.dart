@@ -110,7 +110,7 @@ class StoriesController {
     }
   }
 
-  static Future<Map<String, dynamic>> deleteStory(int id) async {
+  static Future<Map<String, dynamic>> deleteStory(String id) async {
     try {
       var uid = await secureStorage.read(
         key: "uid",

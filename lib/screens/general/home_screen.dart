@@ -7,6 +7,7 @@ import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/friends_provider.dart';
 import 'package:merhaba_app/providers/home_screen_provider.dart';
 import 'package:merhaba_app/providers/profile_tab_provider.dart';
+import 'package:merhaba_app/providers/stories_provider.dart';
 import 'package:merhaba_app/providers/timeline_provider.dart';
 import 'package:merhaba_app/providers/videos_provider.dart';
 import 'package:merhaba_app/screens/tabs/friends/friends_tab.dart';
@@ -44,6 +45,20 @@ class HomeScreen extends StatelessWidget {
           onItemSelected: (value) {
             // print(value);
             if (value == 0) {
+              final storiesProvider = Provider.of<StoriesProvider>(
+                context,
+                listen: false,
+              );
+
+              storiesProvider.getData();
+
+              final profileTabProvider = Provider.of<ProfileTabProvider>(
+                context,
+                listen: false,
+              );
+
+              profileTabProvider.getData();
+
               final timeLineProvider = Provider.of<TimelineProvider>(
                 context,
                 listen: false,

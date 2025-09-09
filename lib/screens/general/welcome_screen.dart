@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:merhaba_app/controllers/auth_controller.dart';
+import 'package:merhaba_app/providers/profile_tab_provider.dart';
+import 'package:merhaba_app/providers/stories_provider.dart';
 import 'package:merhaba_app/providers/timeline_provider.dart';
 import 'package:merhaba_app/screens/authentication/login_screen.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
@@ -46,6 +48,20 @@ class WelcomeScreenState extends State<WelcomeScreen> {
         );
 
         timelineProvider.getData();
+
+        final storiesProvider = Provider.of<StoriesProvider>(
+          context,
+          listen: false,
+        );
+
+        storiesProvider.getData();
+
+        final profileTabProvider = Provider.of<ProfileTabProvider>(
+          context,
+          listen: false,
+        );
+
+        profileTabProvider.getData();
 
         Navigator.of(context).pushNamed("/home");
       } else {

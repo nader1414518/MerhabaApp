@@ -22,6 +22,7 @@ import 'package:merhaba_app/providers/new_post_provider.dart';
 import 'package:merhaba_app/providers/post_provider.dart';
 import 'package:merhaba_app/providers/profile_tab_provider.dart';
 import 'package:merhaba_app/providers/public_profile_provider.dart';
+import 'package:merhaba_app/providers/stories_provider.dart';
 import 'package:merhaba_app/providers/timeline_provider.dart';
 import 'package:merhaba_app/providers/videos_provider.dart';
 import 'package:merhaba_app/screens/account_settings/account_settings_screen.dart';
@@ -160,6 +161,9 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (_) => VideosProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => StoriesProvider(),
       ),
     ],
     child: const MyApp(),

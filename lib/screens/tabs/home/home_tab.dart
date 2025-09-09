@@ -10,6 +10,7 @@ import 'package:merhaba_app/main.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:merhaba_app/providers/chats_provider.dart';
 import 'package:merhaba_app/providers/profile_tab_provider.dart';
+import 'package:merhaba_app/providers/stories_provider.dart';
 import 'package:merhaba_app/providers/timeline_provider.dart';
 import 'package:merhaba_app/widgets/post_widget.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,11 @@ class HomeTab extends StatelessWidget {
     );
 
     final profileTabProvider = Provider.of<ProfileTabProvider>(
+      context,
+      listen: false,
+    );
+
+    final storiesProvider = Provider.of<StoriesProvider>(
       context,
       listen: false,
     );
@@ -229,6 +235,16 @@ class HomeTab extends StatelessWidget {
                           );
                         },
                       ),
+                      ...storiesProvider.stories.map((story) {
+                        return Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.grey.withOpacity(0.5),
+                          ),
+                        );
+                      }),
                     ],
                   ),
                 ),
