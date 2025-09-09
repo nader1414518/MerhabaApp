@@ -407,6 +407,11 @@ class _PostWidgetState extends State<PostWidget> {
                                       ),
                                       child: Text(
                                         "${(currentIndex + 1)}/${widget.post["parsedContent"]["media"].length}",
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ),
