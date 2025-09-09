@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +14,19 @@ import 'package:merhaba_app/providers/timeline_provider.dart';
 import 'package:merhaba_app/widgets/post_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:swipe_refresh/swipe_refresh.dart';
+import 'package:merhaba_app/utils/assets_utils.dart';
+import '';
 
 class HomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final timeLineProvider = Provider.of<TimelineProvider>(
       context,
+    );
+
+    final profileTabProvider = Provider.of<ProfileTabProvider>(
+      context,
+      listen: false,
     );
 
     return Directionality(
@@ -143,8 +151,92 @@ class HomeTab extends StatelessWidget {
                     ).pushNamed("/new_post");
                   },
                 ),
+                // Stories
+                SizedBox(
+                  height: 150,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    children: [
+                      InkWell(
+                        child: Stack(
+                          children: [
+                            profileTabProvider.photoUrl == ""
+                                ? Container(
+                                    // height: 120,
+                                    width: 120,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                        10,
+                                      ),
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                          AssetsUtils.profileAvatar,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : CachedNetworkImage(
+                                    imageUrl: profileTabProvider.photoUrl,
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                      // height: 120,
+                                      width: 120,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                          10,
+                                        ),
+                                        image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    placeholder: (context, url) =>
+                                        const CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.error),
+                                  ),
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Container(
+                                height: 60,
+                                color: Colors.black.withOpacity(0.5),
+                                width: 120,
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.add_circle_outline,
+                                      color: Colors.white,
+                                      size: 35,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.of(
+                            context,
+                            rootNavigator: true,
+                          ).pushNamed(
+                            "/new_story",
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
                 Container(
-                  height: 2,
+                  height: 1,
                   color: const Color(0x8080DDFF),
                   margin: const EdgeInsets.symmetric(vertical: 5),
                 ).animate().scale(
