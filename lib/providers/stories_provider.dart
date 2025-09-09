@@ -125,8 +125,7 @@ class StoriesProvider extends ChangeNotifier {
     if (addStoryTextController.text == "" &&
         addStoryPhotoUrl == "" &&
         addStoryVideoUrl == "" &&
-        addStoryVoiceUrl == "" &&
-        addStoryDurationInDays < 1) {
+        addStoryVoiceUrl == "") {
       if (showMessages) {
         Fluttertoast.showToast(msg: "Please fill any of the fields");
       }
@@ -140,8 +139,7 @@ class StoriesProvider extends ChangeNotifier {
     if (editStoryTextController.text == "" &&
         editStoryPhotoUrl == "" &&
         editStoryVideoUrl == "" &&
-        editStoryVoiceUrl == "" &&
-        editStoryDurationInDays < 1) {
+        editStoryVoiceUrl == "") {
       if (showMessages) {
         Fluttertoast.showToast(msg: "Please fill any of the fields");
       }

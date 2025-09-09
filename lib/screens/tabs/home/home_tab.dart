@@ -157,6 +157,9 @@ class HomeTab extends StatelessWidget {
                     ).pushNamed("/new_post");
                   },
                 ),
+                const SizedBox(
+                  height: 10,
+                ),
                 // Stories
                 SizedBox(
                   height: 150,
@@ -236,12 +239,17 @@ class HomeTab extends StatelessWidget {
                         },
                       ),
                       ...storiesProvider.stories.map((story) {
-                        return Container(
-                          width: 120,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.grey.withOpacity(0.5),
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            left: 5,
+                          ),
+                          child: Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.grey.withOpacity(0.5),
+                            ),
                           ),
                         );
                       }),

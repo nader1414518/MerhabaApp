@@ -37,6 +37,7 @@ import 'package:merhaba_app/screens/general/welcome_screen.dart';
 import 'package:merhaba_app/screens/location/location_viewer.dart';
 import 'package:merhaba_app/screens/posts/post_screen.dart';
 import 'package:merhaba_app/screens/public_profile/public_profile_screen.dart';
+import 'package:merhaba_app/screens/stories/new_story_screen.dart';
 import 'package:merhaba_app/screens/tabs/home/new_post_screen.dart';
 import 'package:merhaba_app/screens/tabs/profile/app_settings_screen.dart';
 import 'package:merhaba_app/utils/globals.dart';
@@ -290,6 +291,7 @@ class MyAppState extends State<MyApp> {
           "/public_profile": (context) => const PublicProfileScreen(),
           "/account_settings": (context) => const AccountSettingsScreen(),
           "/block_list": (context) => const BlockListScreen(),
+          "/new_story": (context) => const NewStoryScreen(),
         },
       ),
     );
