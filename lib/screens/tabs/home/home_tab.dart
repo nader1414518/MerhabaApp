@@ -13,6 +13,7 @@ import 'package:merhaba_app/providers/profile_tab_provider.dart';
 import 'package:merhaba_app/providers/stories_provider.dart';
 import 'package:merhaba_app/providers/timeline_provider.dart';
 import 'package:merhaba_app/widgets/post_widget.dart';
+import 'package:merhaba_app/widgets/video_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:swipe_refresh/swipe_refresh.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
@@ -27,12 +28,10 @@ class HomeTab extends StatelessWidget {
 
     final profileTabProvider = Provider.of<ProfileTabProvider>(
       context,
-      listen: false,
     );
 
     final storiesProvider = Provider.of<StoriesProvider>(
       context,
-      listen: false,
     );
 
     return Directionality(
@@ -249,6 +248,111 @@ class HomeTab extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.grey.withOpacity(0.5),
+                            ),
+                            child: Stack(
+                              children: [
+                                story["photo_url"].isNotEmpty
+                                    ? CachedNetworkImage(
+                                        imageUrl: story["photo_url"],
+                                        imageBuilder:
+                                            (context, imageProvider) =>
+                                                Container(
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: imageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : story["video_url"].isNotEmpty
+                                        ? VideoWidget(
+                                            url: story["video_url"].toString(),
+                                          )
+                                        : const SizedBox(),
+                                Container(
+                                  margin: const EdgeInsets.only(
+                                    top: 5,
+                                    left: 5,
+                                    right: 5,
+                                  ),
+                                  padding: const EdgeInsets.all(
+                                    5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blueGrey.withOpacity(
+                                      0.25,
+                                    ),
+                                    borderRadius: BorderRadius.circular(
+                                      5,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      story["user_photo"].isEmpty
+                                          ? Container(
+                                              height: 20,
+                                              width: 20,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                  60,
+                                                ),
+                                                image: DecorationImage(
+                                                  image: AssetImage(
+                                                    AssetsUtils.profileAvatar,
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          : CachedNetworkImage(
+                                              imageUrl: story["user_photo"],
+                                              imageBuilder:
+                                                  (context, imageProvider) =>
+                                                      Container(
+                                                height: 20,
+                                                width: 20,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                    60,
+                                                  ),
+                                                  image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                              placeholder: (context, url) =>
+                                                  const CircularProgressIndicator(),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Icon(Icons.error),
+                                            ),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      SizedBox(
+                                        width: 70,
+                                        child: Text(
+                                          story["username"].toString(),
+                                          // textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         );

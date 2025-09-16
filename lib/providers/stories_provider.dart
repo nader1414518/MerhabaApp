@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:merhaba_app/controllers/stories_controller.dart';
+import 'package:merhaba_app/main.dart';
 
 class StoriesProvider extends ChangeNotifier {
   bool _isLoading = false;
@@ -254,6 +255,10 @@ class StoriesProvider extends ChangeNotifier {
         Fluttertoast.showToast(msg: res["message"].toString());
 
         await getStories();
+
+        Navigator.of(
+          navigatorKey.currentContext!,
+        ).pop();
       } else {
         Fluttertoast.showToast(msg: res["message"].toString());
       }
