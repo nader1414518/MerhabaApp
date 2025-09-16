@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -6,12 +8,30 @@ import 'package:merhaba_app/main.dart';
 import 'package:merhaba_app/providers/profile_tab_provider.dart';
 import 'package:merhaba_app/providers/stories_provider.dart';
 import 'package:merhaba_app/utils/assets_utils.dart';
+import 'package:merhaba_app/widgets/video_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:image_picker/image_picker.dart';
 
-class NewStoryScreen extends StatelessWidget {
+class NewStoryScreen extends StatefulWidget {
   const NewStoryScreen({super.key});
+
+  @override
+  State<NewStoryScreen> createState() => _NewStoryScreenState();
+}
+
+class _NewStoryScreenState extends State<NewStoryScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    final storiesProvider = Provider.of<StoriesProvider>(
+      context,
+      listen: false,
+    );
+
+    storiesProvider.clearAddFields();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,182 +157,257 @@ class NewStoryScreen extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            Container(
-              margin: const EdgeInsets.only(top: 20),
-              padding: const EdgeInsets.symmetric(
-                vertical: 5,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(
-                  0.1,
-                ),
-                borderRadius: BorderRadius.circular(
-                  5,
-                ),
-              ),
-              child: ListView(
-                shrinkWrap: true,
-                physics: const ClampingScrollPhysics(),
-                children: [
-                  ListTile(
-                    dense: true,
-                    title: Text(
-                      AppLocale.photo_label.getString(
-                        context,
-                      ),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.photo,
-                    ),
-                    onTap: () {
-                      showDialog<String>(
-                        context: context,
-                        builder: (context) => fluent.ContentDialog(
-                          actions: [
-                            fluent.Button(
-                              child: Text(
-                                AppLocale.camera_label.getString(
-                                  context,
-                                ),
-                              ),
-                              onPressed: () async {
-                                ImagePicker imagePicker = ImagePicker();
-
-                                var file = await imagePicker.pickImage(
-                                  source: ImageSource.camera,
-                                  imageQuality: 50,
-                                );
-
-                                if (file == null) {
-                                  Navigator.of(context).pop();
-                                  return;
-                                }
-
-                                Navigator.of(context).pop();
-                              },
+            storiesProvider.addStoryPhotoUrl.isNotEmpty
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl: storiesProvider.addStoryPhotoUrl,
+                        imageBuilder: (context, imageProvider) => Container(
+                          height: 200,
+                          width: 200,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.contain,
                             ),
-                            fluent.Button(
-                              child: Text(
-                                AppLocale.gallery_label.getString(
-                                  context,
-                                ),
-                              ),
-                              onPressed: () async {
-                                ImagePicker imagePicker = ImagePicker();
-
-                                var files = await imagePicker.pickMultiImage(
-                                  imageQuality: 50,
-                                );
-
-                                for (var file in files) {}
-
-                                Navigator.of(context).pop();
-
-                                // Navigator.pop(
-                                //     context, 'User deleted file');
-                                // Delete file here
-                              },
-                            ),
-                          ],
+                          ),
                         ),
-                      );
-                    },
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  ListTile(
-                    dense: true,
-                    title: Text(
-                      AppLocale.video_label.getString(
-                        context,
-                      ),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                      )
+                    ],
+                  )
+                : const SizedBox(),
+            storiesProvider.addStoryVideoUrl.isNotEmpty
+                ? Container(
+                    height: 200,
+                    width: 200,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    trailing: const Icon(
-                      Icons.video_camera_back,
+                    child: VideoWidget(
+                      url: storiesProvider.addStoryVideoUrl,
+                      autoPlay: false,
+                      showControls: true,
+                      compactMode: true,
+                      loop: false,
                     ),
-                    onTap: () {
-                      showDialog<String>(
-                        context: context,
-                        builder: (context) => fluent.ContentDialog(
-                          actions: [
-                            fluent.Button(
-                              child: Text(
-                                AppLocale.camera_label.getString(
-                                  context,
-                                ),
-                              ),
-                              onPressed: () async {
-                                ImagePicker imagePicker = ImagePicker();
-
-                                var file = await imagePicker.pickVideo(
-                                  source: ImageSource.camera,
-                                );
-
-                                if (file == null) {
-                                  Navigator.of(context).pop();
-                                  return;
-                                }
-
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            fluent.Button(
-                              child: Text(
-                                AppLocale.gallery_label.getString(
-                                  context,
-                                ),
-                              ),
-                              onPressed: () async {
-                                ImagePicker imagePicker = ImagePicker();
-
-                                var file = await imagePicker.pickVideo(
-                                  source: ImageSource.gallery,
-                                );
-
-                                if (file == null) {
-                                  Navigator.of(context).pop();
-                                  return;
-                                }
-
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  ListTile(
-                    dense: true,
-                    title: Text(
-                      AppLocale.voice_label.getString(
-                        context,
-                      ),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.music_note,
-                    ),
-                    onTap: () {},
-                  ),
-                ],
-              ),
+                  )
+                : const SizedBox(),
+            const SizedBox(
+              height: 10,
             ),
+            storiesProvider.addStoryPhotoUrl.isNotEmpty ||
+                    storiesProvider.addStoryVideoUrl.isNotEmpty
+                ? const SizedBox()
+                : Container(
+                    margin: const EdgeInsets.only(top: 20),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(
+                        0.1,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        5,
+                      ),
+                    ),
+                    child: ListView(
+                      shrinkWrap: true,
+                      physics: const ClampingScrollPhysics(),
+                      children: [
+                        ListTile(
+                          dense: true,
+                          title: Text(
+                            AppLocale.photo_label.getString(
+                              context,
+                            ),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          trailing: const Icon(
+                            Icons.photo,
+                          ),
+                          onTap: () {
+                            showDialog<String>(
+                              context: context,
+                              builder: (context) => fluent.ContentDialog(
+                                actions: [
+                                  fluent.Button(
+                                    child: Text(
+                                      AppLocale.camera_label.getString(
+                                        context,
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      ImagePicker imagePicker = ImagePicker();
+
+                                      var file = await imagePicker.pickImage(
+                                        source: ImageSource.camera,
+                                        imageQuality: 50,
+                                      );
+
+                                      if (file == null) {
+                                        Navigator.of(context).pop();
+                                        return;
+                                      }
+
+                                      await storiesProvider.uploadStoryPhoto(
+                                        File(
+                                          file.path,
+                                        ),
+                                      );
+
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  fluent.Button(
+                                    child: Text(
+                                      AppLocale.gallery_label.getString(
+                                        context,
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      ImagePicker imagePicker = ImagePicker();
+
+                                      var file = await imagePicker.pickImage(
+                                        imageQuality: 50,
+                                        source: ImageSource.gallery,
+                                      );
+
+                                      if (file == null) {
+                                        Navigator.of(context).pop();
+                                        return;
+                                      }
+
+                                      await storiesProvider.uploadStoryPhoto(
+                                        File(
+                                          file.path,
+                                        ),
+                                      );
+
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        ListTile(
+                          dense: true,
+                          title: Text(
+                            AppLocale.video_label.getString(
+                              context,
+                            ),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          trailing: const Icon(
+                            Icons.video_camera_back,
+                          ),
+                          onTap: storiesProvider.addStoryVideoUrl.isNotEmpty ||
+                                  storiesProvider.addStoryPhotoUrl.isNotEmpty
+                              ? null
+                              : () {
+                                  showDialog<String>(
+                                    context: context,
+                                    builder: (context) => fluent.ContentDialog(
+                                      actions: [
+                                        fluent.Button(
+                                          child: Text(
+                                            AppLocale.camera_label.getString(
+                                              context,
+                                            ),
+                                          ),
+                                          onPressed: () async {
+                                            ImagePicker imagePicker =
+                                                ImagePicker();
+
+                                            var file =
+                                                await imagePicker.pickVideo(
+                                              source: ImageSource.camera,
+                                            );
+
+                                            if (file == null) {
+                                              Navigator.of(context).pop();
+                                              return;
+                                            }
+
+                                            await storiesProvider
+                                                .uploadStoryVideo(
+                                              File(
+                                                file.path,
+                                              ),
+                                            );
+
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        fluent.Button(
+                                          child: Text(
+                                            AppLocale.gallery_label.getString(
+                                              context,
+                                            ),
+                                          ),
+                                          onPressed: () async {
+                                            ImagePicker imagePicker =
+                                                ImagePicker();
+
+                                            var file =
+                                                await imagePicker.pickVideo(
+                                              source: ImageSource.gallery,
+                                            );
+
+                                            if (file == null) {
+                                              Navigator.of(context).pop();
+                                              return;
+                                            }
+
+                                            await storiesProvider
+                                                .uploadStoryVideo(
+                                              File(
+                                                file.path,
+                                              ),
+                                            );
+
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        ListTile(
+                          dense: true,
+                          title: Text(
+                            AppLocale.voice_label.getString(
+                              context,
+                            ),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          trailing: const Icon(
+                            Icons.music_note,
+                          ),
+                          onTap: () {},
+                        ),
+                      ],
+                    ),
+                  ),
           ],
         ),
       ),

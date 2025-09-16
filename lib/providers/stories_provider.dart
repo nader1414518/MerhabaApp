@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:merhaba_app/controllers/stories_controller.dart';
@@ -147,6 +149,95 @@ class StoriesProvider extends ChangeNotifier {
     }
 
     return true;
+  }
+
+  Future<void> uploadStoryPhoto(File file) async {
+    setIsLoading(true);
+
+    try {
+      var res = await StoriesController.uploadStoryPhoto(
+        file,
+      );
+
+      if (res["result"] == true) {
+        setAddStoryPhotoUrl(res["url"].toString());
+      } else {
+        Fluttertoast.showToast(
+          msg: res["message"].toString(),
+        );
+      }
+    } catch (e) {
+      print(e.toString());
+      Fluttertoast.showToast(
+        msg: e.toString(),
+      );
+    }
+
+    setIsLoading(false);
+  }
+
+  Future<void> uploadStoryVideo(File file) async {
+    setIsLoading(true);
+
+    try {
+      var res = await StoriesController.uploadStoryVideo(
+        file,
+      );
+
+      if (res["result"] == true) {
+        setAddStoryVideoUrl(res["url"].toString());
+      } else {
+        Fluttertoast.showToast(
+          msg: res["message"].toString(),
+        );
+      }
+    } catch (e) {
+      print(e.toString());
+      Fluttertoast.showToast(
+        msg: e.toString(),
+      );
+    }
+
+    setIsLoading(false);
+  }
+
+  Future<void> uploadStoryVoice(File file) async {
+    setIsLoading(true);
+
+    try {
+      var res = await StoriesController.uploadStoryVoice(
+        file,
+      );
+
+      if (res["result"] == true) {
+        setAddStoryVoiceUrl(res["url"].toString());
+      } else {
+        Fluttertoast.showToast(
+          msg: res["message"].toString(),
+        );
+      }
+    } catch (e) {
+      print(e.toString());
+      Fluttertoast.showToast(
+        msg: e.toString(),
+      );
+    }
+
+    setIsLoading(false);
+  }
+
+  Future<void> clearAddFields() async {
+    setAddStoryPhotoUrl("");
+    setAddStoryVideoUrl("");
+    setAddStoryVoiceUrl("");
+    notifyListeners();
+  }
+
+  Future<void> clearEditFields() async {
+    setEditStoryPhotoUrl("");
+    setEditStoryVideoUrl("");
+    setEditStoryVoiceUrl("");
+    notifyListeners();
   }
 
   Future<void> addStory() async {
