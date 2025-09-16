@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:merhaba_app/controllers/auth_controller.dart';
 import 'package:merhaba_app/main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:path/path.dart' as p;
 
 class StoriesController {
   static Future<Map<String, dynamic>> addStory(
@@ -274,6 +277,147 @@ class StoriesController {
     } catch (e) {
       print(e.toString());
       return [];
+    }
+  }
+
+  // Upload story photo
+  static Future<Map<String, dynamic>> uploadStoryPhoto(File file) async {
+    try {
+      var uid = await secureStorage.read(
+        key: "uid",
+      );
+
+      if (uid == null) {
+        return {
+          "result": false,
+          "message": "Please login again!!",
+        };
+      }
+
+      String filename =
+          "${DateTime.now().toIso8601String().replaceAll(" ", "").replaceAll(".", "").replaceAll(":", "")}_${p.basename(file.path).replaceAll(" ", "")}";
+
+      final String fullPath =
+          await Supabase.instance.client.storage.from('stories').upload(
+                filename,
+                file,
+                fileOptions: const FileOptions(
+                  cacheControl: '3600',
+                  upsert: false,
+                ),
+              );
+
+      final String publicUrl = Supabase.instance.client.storage
+          .from("stories")
+          .getPublicUrl(filename);
+
+      return {
+        "result": true,
+        "message": "Uploaded successfully ... ",
+        "url": publicUrl,
+        "filename": filename,
+        "fullPath": fullPath,
+      };
+    } catch (e) {
+      print(e.toString());
+      return {
+        "result": false,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  // Upload story video
+  static Future<Map<String, dynamic>> uploadStoryVideo(File file) async {
+    try {
+      var uid = await secureStorage.read(
+        key: "uid",
+      );
+
+      if (uid == null) {
+        return {
+          "result": false,
+          "message": "Please login again!!",
+        };
+      }
+
+      String filename =
+          "${DateTime.now().toIso8601String().replaceAll(" ", "").replaceAll(".", "").replaceAll(":", "")}_${p.basename(file.path).replaceAll(" ", "")}";
+
+      final String fullPath =
+          await Supabase.instance.client.storage.from('stories').upload(
+                filename,
+                file,
+                fileOptions: const FileOptions(
+                  cacheControl: '3600',
+                  upsert: false,
+                ),
+              );
+
+      final String publicUrl = Supabase.instance.client.storage
+          .from("stories")
+          .getPublicUrl(filename);
+
+      return {
+        "result": true,
+        "message": "Uploaded successfully ... ",
+        "url": publicUrl,
+        "filename": filename,
+        "fullPath": fullPath,
+      };
+    } catch (e) {
+      print(e.toString());
+      return {
+        "result": false,
+        "message": e.toString(),
+      };
+    }
+  }
+
+  // Upload story voice
+  static Future<Map<String, dynamic>> uploadStoryVoice(File file) async {
+    try {
+      var uid = await secureStorage.read(
+        key: "uid",
+      );
+
+      if (uid == null) {
+        return {
+          "result": false,
+          "message": "Please login again!!",
+        };
+      }
+
+      String filename =
+          "${DateTime.now().toIso8601String().replaceAll(" ", "").replaceAll(".", "").replaceAll(":", "")}_${p.basename(file.path).replaceAll(" ", "")}";
+
+      final String fullPath =
+          await Supabase.instance.client.storage.from('stories').upload(
+                filename,
+                file,
+                fileOptions: const FileOptions(
+                  cacheControl: '3600',
+                  upsert: false,
+                ),
+              );
+
+      final String publicUrl = Supabase.instance.client.storage
+          .from("stories")
+          .getPublicUrl(filename);
+
+      return {
+        "result": true,
+        "message": "Uploaded successfully ... ",
+        "url": publicUrl,
+        "filename": filename,
+        "fullPath": fullPath,
+      };
+    } catch (e) {
+      print(e.toString());
+      return {
+        "result": false,
+        "message": e.toString(),
+      };
     }
   }
 }
