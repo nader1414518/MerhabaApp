@@ -279,6 +279,7 @@ class HomeTab extends StatelessWidget {
                                     left: 5,
                                     right: 5,
                                   ),
+                                  // Padding
                                   padding: const EdgeInsets.all(
                                     5,
                                   ),
